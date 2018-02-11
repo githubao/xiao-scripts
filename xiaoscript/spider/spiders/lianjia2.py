@@ -12,8 +12,8 @@ import scrapy
 from scrapy import Request
 import json
 
-# out_file = 'C:\\Users\\xiaobao\\Desktop\\lianjia.txt'
-out_file = '/mnt/home/baoqiang/lianjia.txt'
+# out_file = 'C:\\Users\\xiaobao\\Desktop\\lianjia.json'
+out_file = '/mnt/home/baoqiang/lianjia.json'
 
 
 class Lianjia2Spider(scrapy.Spider):
@@ -57,23 +57,35 @@ class Lianjia2Spider(scrapy.Spider):
 
         body = response.selector.xpath('//body')
 
+        # 标题和文本
         dic['title'] = body.xpath('.//h1/text()')[0].extract().strip()
+        idurl = body.xpath('.//div[@class="houseRecord"]/span[@class="info"]/text()')
+        dic['id'] = int(idurl[0].extract().strip('\'"').strip())
 
+        # 价格信息
         dic['price'] = float(
             body.xpath('.//div[contains(@class,"price")]/span[@class="total"]/text()')[0].extract().strip())
         dic['unit'] = float(body.xpath('.//span[@class="unitPriceValue"]/text()')[0].extract().strip())
 
+        # 基本信息
         houseurl = body.xpath('.//div[@class="houseInfo"]')
         dic['structure'] = houseurl.xpath('./div[@class="room"]//text()')[0].extract().strip()
         dic['direction'] = houseurl.xpath('./div[@class="type"]//text()')[0].extract().strip()
-        dic['size'] = houseurl.xpath('./div[@class="area"]//text()')[0].extract().strip().replace('平米', '')
+        dic['size'] = float(houseurl.xpath('./div[@class="area"]//text()')[0].extract().strip().replace('平米', ''))
 
+        # 社区信息
         communityurl = body.xpath('.//div[@class="communityName"]/a[contains(@class,"info")]')
         dic['community'] = communityurl.xpath('./text()')[0].extract().strip()
 
+        # 位置信息
         areaurl = body.xpath('.//div[@class="areaName"]/span[contains(@class,"info")]//text()')
-        dic['areas'] = [item.extract().strip() for item in areaurl if item.extract().strip()]
         dic['district'] = areaurl[0].extract().strip()
+        dic['town'] = areaurl[1].extract().strip()
+        dic['street'] = areaurl[2].extract().strip() if len(areaurl) > 2 else '_'
+
+        # 其他信息
+        introurl = body.xpath('.//div[@class="introContent"]')
+        update_dic(introurl, dic)
 
         with open(out_file, 'a', encoding='utf-8') as fw:
             json.dump(dic, fw, ensure_ascii=False, sort_keys=True)
@@ -81,20 +93,28 @@ class Lianjia2Spider(scrapy.Spider):
 
 
 def update_dic(infourl, dic):
-    aurl = infourl.xpath('./a')
-    if aurl:
-        dic['xiaoqu'] = aurl.xpath('./text()')[0].extract().strip()
+    baseurl = infourl.xpath('./div[@class="base"]//ul/li')
 
-    spans = infourl.xpath('.//span//text()')
+    for item in baseurl:
+        name = item.xpath('./span/text()')[0].extract().strip()
+        value = item.xpath('./text()')[0].extract().strip()
 
-    for item in spans:
-        text = item.extract().strip()
-        if '室' in text or '厅' in text:
-            dic['huxing'] = text
-        if '平米' in text:
-            dic['size'] = int(text.replace('平米', ''))
-        if '东' in text or '西' in text or '南' in text or '北' in text:
-            dic['direction'] = text
+        if name == '套内面积':
+            dic['size_inuse'] = float(value)
+
+        if name == '所在楼层':
+            dic['floor'] = value
+
+    transactionurl = infourl.xpath('./div[@class="transaction"]//ul/li')
+    for item in transactionurl:
+        name = item.xpath('./span/text()')[0].extract().strip()
+        value = item.xpath('./text()')[0].extract().strip()
+
+        if name == '交易权属':
+            dic['transact_type'] = value
+
+        if name == '房屋用途':
+            dic['house_type'] = value
 
 
 def get_pg_num(response):

@@ -8,37 +8,58 @@
 @time: 2018/2/11 11:34
 """
 
+import json
+
 root_path = 'C:\\Users\\xiaobao\\Desktop'
 
 
+def patch_dic(json_data):
+    areas = json_data['areas']
+
+    if len(areas) != 2 and len(areas) != 3:
+        print('err: {}'.format(json_data))
+
+    areas_str = '\t'.join(areas)
+    if len(areas) == 2:
+        areas_str += '\t '
+
+    json_data['areas'] = areas_str
+    del json_data['district']
+
+
 def process():
-    with open('{}/lianjia.txt'.format(root_path), 'r', encoding='utf-8') as f, \
-            open('{}/result.txt'.format(root_path), 'w', encoding='utf-8') as fw:
+    not_print_key = True
+
+    with open('{}/lianjia.json'.format(root_path), 'r', encoding='utf-8') as f, \
+            open('{}/lianjia.txt'.format(root_path), 'w', encoding='utf-8') as fw:
         for idx, line in enumerate(f, start=1):
             line = line.strip()
-            attrs = line.strip().split('\t')
-            if len(attrs) != 12:
-                # print(len(attrs), line)
+            json_data = json.loads(line.strip())
+
+            structure = json_data['structure']
+            if '车位' in structure or '车库' in structure:
                 continue
 
-            house_type = attrs[2]
-            if '车位' in house_type or '车库' in house_type:
-                continue
-
-            price = float(attrs[7])
+            price = json_data['price']
             if price > 400:
                 continue
 
-            location = attrs[10]
-            if '燕郊' in location:
+            size = float(json_data['size'])
+            if size < 40:
                 continue
 
-            house_size = attrs[3]
-            house_size = float(house_size.replace('平米', ''))
-            if house_size < 40:
-                continue
+            # 保证打印的area的格式
+            patch_dic(json_data)
 
-            fw.write('{}\n'.format(line))
+            sort_dic = sorted(json_data.items())
+
+            if not_print_key:
+                str = '\t'.join(item[0] for item in sort_dic)
+                fw.write('{}\n'.format(str))
+                not_print_key = False
+
+            str = '\t'.join('{}'.format(item[1]) for item in sort_dic)
+            fw.write('{}\n'.format(str))
 
 
 def main():
@@ -57,5 +78,3 @@ if __name__ == '__main__':
 5. 无论如何不能小于40平，70平就非常好了
 6. 海淀或者朝阳的，第二选择昌平
 """
-
-
