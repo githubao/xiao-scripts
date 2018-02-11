@@ -11,9 +11,9 @@
 import scrapy
 from scrapy import Request
 import json
-import traceback
 
-out_file = 'C:\\Users\\xiaobao\\Desktop\\lianjia.txt'
+# out_file = 'C:\\Users\\xiaobao\\Desktop\\lianjia.txt'
+out_file = '/mnt/home/baoqiang/lianjia.txt'
 
 
 class Lianjia2Spider(scrapy.Spider):
@@ -27,7 +27,7 @@ class Lianjia2Spider(scrapy.Spider):
         for item in classes:
             url = '{}{}'.format(root_url, item.xpath('./@href')[0].extract())
 
-            if 'lf.lianjian' in url:
+            if 'lf.lianjia' in url:
                 continue
 
             yield Request(url, callback=self.parse_page)
@@ -59,13 +59,14 @@ class Lianjia2Spider(scrapy.Spider):
 
         dic['title'] = body.xpath('.//h1/text()')[0].extract().strip()
 
-        dic['price'] = int(body.xpath('.//div[contains(@class,"price")]/span[@class="total"]/text()')[0].extract().strip())
-        dic['unit'] = int(body.xpath('.//span[@class="unitPriceValue"]/text()')[0].extract().strip())
+        dic['price'] = float(
+            body.xpath('.//div[contains(@class,"price")]/span[@class="total"]/text()')[0].extract().strip())
+        dic['unit'] = float(body.xpath('.//span[@class="unitPriceValue"]/text()')[0].extract().strip())
 
         houseurl = body.xpath('.//div[@class="houseInfo"]')
         dic['structure'] = houseurl.xpath('./div[@class="room"]//text()')[0].extract().strip()
         dic['direction'] = houseurl.xpath('./div[@class="type"]//text()')[0].extract().strip()
-        dic['size'] = houseurl.xpath('./div[@class="area"]//text()')[0].extract().strip().replace('平米','')
+        dic['size'] = houseurl.xpath('./div[@class="area"]//text()')[0].extract().strip().replace('平米', '')
 
         communityurl = body.xpath('.//div[@class="communityName"]/a[contains(@class,"info")]')
         dic['community'] = communityurl.xpath('./text()')[0].extract().strip()
