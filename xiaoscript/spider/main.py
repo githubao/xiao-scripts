@@ -12,7 +12,7 @@ from scrapy import cmdline
 
 
 def run():
-    cmdline.execute('scrapy crawl lianjia'.split())
+    cmdline.execute('scrapy crawl lianjia2'.split())
 
 
 def main():
