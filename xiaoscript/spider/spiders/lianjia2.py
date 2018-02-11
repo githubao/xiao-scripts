@@ -32,7 +32,7 @@ class Lianjia2Spider(scrapy.Spider):
 
             yield Request(url, callback=self.parse_page)
 
-            break
+            # break
 
     def parse_page(self, response):
         pg_num = get_pg_num(response)
@@ -40,41 +40,43 @@ class Lianjia2Spider(scrapy.Spider):
         for i in range(1, pg_num + 1):
             yield Request('{}pg{}/'.format(response.url, i), callback=self.parse_list)
 
-            break
+            # break
 
     def parse_list(self, response):
-        classes = response.selector.xpath('//ul[@class="sellListContent"]//li[@class="clear"]//div[@class="title"]/a')
+        classes = response.selector.xpath(
+            '//ul[@class="sellListContent"]//li[@class="clear"]//div[@class="title"]/a/@href')
 
-        results = []
         for item in classes:
-            dic = {'from_url': response.url}
+            url = item.extract().strip()
+            yield Request(url, callback=self.parse_item)
 
-            aurl = item.xpath('.//')
-            dic['url'] = aurl.xpath('./@href')[0].extract().strip()
-            dic['id'] = int(aurl.xpath('./@data-housecode')[0].extract().strip())
-            dic['title'] = aurl.xpath('./text()')[0].extract().strip().replace('\t', '')
+            # break
 
-            try:
-                infourl = item.xpath('.//div[@class="houseInfo"]')
-                update_dic(infourl, dic)
+    def parse_item(self, response):
+        dic = {'url': response.url}
 
-                totalurl = item.xpath('.//div[@class="totalPrice"]')
-                dic['total_price'] = ''.join(i.extract().strip() for i in totalurl.xpath('.//text()'))
+        body = response.selector.xpath('//body')
 
-                uniturl = item.xpath('.//div[@class="unitPrice"]')
-                dic['unit_price'] = int(uniturl.xpath('./@data-price')[0].extract().strip())
+        dic['title'] = body.xpath('.//h1/text()')[0].extract().strip()
 
-            except Exception as e:
-                traceback.print_exc()
+        dic['price'] = int(body.xpath('.//div[contains(@class,"price")]/span[@class="total"]/text()')[0].extract().strip())
+        dic['unit'] = int(body.xpath('.//span[@class="unitPriceValue"]/text()')[0].extract().strip())
 
-            results.append(dic)
+        houseurl = body.xpath('.//div[@class="houseInfo"]')
+        dic['structure'] = houseurl.xpath('./div[@class="room"]//text()')[0].extract().strip()
+        dic['direction'] = houseurl.xpath('./div[@class="type"]//text()')[0].extract().strip()
+        dic['size'] = houseurl.xpath('./div[@class="area"]//text()')[0].extract().strip().replace('平米','')
 
-            break
+        communityurl = body.xpath('.//div[@class="communityName"]/a[contains(@class,"info")]')
+        dic['community'] = communityurl.xpath('./text()')[0].extract().strip()
+
+        areaurl = body.xpath('.//div[@class="areaName"]/span[contains(@class,"info")]//text()')
+        dic['areas'] = [item.extract().strip() for item in areaurl if item.extract().strip()]
+        dic['district'] = areaurl[0].extract().strip()
 
         with open(out_file, 'a', encoding='utf-8') as fw:
-            for item in results:
-                json.dump(item, fw, ensure_ascii=False, sort_keys=True)
-                fw.write('\n')
+            json.dump(dic, fw, ensure_ascii=False, sort_keys=True)
+            fw.write('\n')
 
 
 def update_dic(infourl, dic):
