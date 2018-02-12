@@ -28,5 +28,5 @@ class UserAgentMiddleware:
     def process_request(self, request, spider):
         if self.user_agent_pool:
             random_user_agent = random.choice(self.user_agent_pool)
-            print('using useragent:[{}] {}'.format(request.url, random_user_agent))
+            # print('using useragent:[{}] {}'.format(request.url, random_user_agent))
             request.headers['User-Agent'] = random_user_agent

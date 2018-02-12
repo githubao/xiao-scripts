@@ -13,10 +13,8 @@ from scrapy import Request
 import json
 import traceback
 
-outfile = 'C:\\Users\\xiaobao\\Desktop\\dianping.json'
-
-
-# outfile = '/mnt/home/baoqiang/dianping.json'
+# outfile = 'C:\\Users\\xiaobao\\Desktop\\dianping.json'
+outfile = '/mnt/home/baoqiang/dianping.json'
 
 
 class DianpingSpider(scrapy.Spider):
@@ -31,14 +29,14 @@ class DianpingSpider(scrapy.Spider):
         classes = response.selector.xpath('//div[@id="metro-nav"]/a')
         for item in classes:
             url = item.xpath('./@href')[0].extract().strip()
-            line = item.xpath('./text()')[0].extract().strip()
+            line = item.xpath('.//text()')[0].extract().strip()
 
             yield Request(url, callback=self.parse_metro, meta={'line': line})
 
-            break
+            # break
 
     def parse_metro(self, response):
-        classes = response.selector.xpath('//div[@id="metro-nav-sub"]/a[not(@class,"cur")]')
+        classes = response.selector.xpath('//div[@id="metro-nav-sub"]/a[not(contains(@class,"cur"))]')
         for item in classes:
             url = item.xpath('./@href')[0].extract().strip()
             station = item.xpath('.//text()')[0].extract().strip()
@@ -46,7 +44,7 @@ class DianpingSpider(scrapy.Spider):
             yield Request(url, callback=self.parse_page,
                           meta={'line': response.meta['line'], 'station': station})
 
-            break
+            # break
 
     def parse_page(self, response):
         pg_num = get_pg_num(response)
@@ -54,21 +52,21 @@ class DianpingSpider(scrapy.Spider):
         url = response.url
 
         for i in range(1, pg_num + 1):
-            yield Request('{}p{}'.format(url, i), callback=self.parse_item)
+            yield Request('{}p{}'.format(url, i), callback=self.parse_item, meta=response.meta)
 
-            break
+            # break
 
     def parse_item(self, response):
         results = []
 
-        classes = response.selector.xpath('//div[@class="content"]//ul/li')
+        classes = response.selector.xpath('//div[@class="content"]//div[@id="shop-all-list"]//ul/li')
         for item in classes:
-            dic = {}
+            dic = {'line': response.meta['line'], 'station': response.meta['station']}
 
             try:
                 aurl = item.xpath('.//div[@class="tit"]/a')
                 dic['url'] = aurl.xpath('./@href')[0].extract().strip()
-                dic['name'] = aurl.xpath('.//text()')[0].extract().strip()
+                dic['name'] = aurl.xpath('.//h4/text()')[0].extract().strip()
 
                 commenturl = item.xpath('.//div[@class="comment"]//b')
                 dic['comment_cnt'] = commenturl.xpath('.//text()')[0].extract().strip()
@@ -89,7 +87,7 @@ class DianpingSpider(scrapy.Spider):
 
 
 def get_pg_num(response):
-    classes = response.xpath.selector('//div[@class="page"]')
+    classes = response.selector.xpath('//div[@class="page"]/a')
     item = classes[-2]
     pg_num = item.xpath('./text()')[0].extract().strip()
     return int(pg_num)
