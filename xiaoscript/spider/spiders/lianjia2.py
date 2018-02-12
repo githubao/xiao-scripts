@@ -83,6 +83,10 @@ class Lianjia2Spider(scrapy.Spider):
         dic['town'] = areaurl[1].extract().strip()
         dic['street'] = areaurl[2].extract().strip() if len(areaurl) > 2 else '_'
 
+        # 地铁信息
+        subwayurl = body.xpath('.//div[@class="areaName"]/a[@class="supplement"]/text()')
+        dic['subway'] = subwayurl[0].extract().strip() if subwayurl else '_'
+
         # 其他信息
         introurl = body.xpath('.//div[@class="introContent"]')
         update_dic(introurl, dic)
