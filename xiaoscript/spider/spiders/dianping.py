@@ -68,9 +68,9 @@ class DianpingSpider(scrapy.Spider):
                 dic['url'] = aurl.xpath('./@href')[0].extract().strip()
                 dic['name'] = aurl.xpath('.//h4/text()')[0].extract().strip()
 
-                commenturl = item.xpath('.//div[@class="comment"]//b')
-                dic['comment_cnt'] = commenturl.xpath('.//text()')[0].extract().strip()
-                dic['price'] = commenturl.xpath('.//text()')[1].extract().strip().replace('￥', '')
+                commenturl = item.xpath('.//div[@class="comment"]//b//text()')
+                dic['comment_cnt'] = int(commenturl[0].extract().strip()) if len(commenturl) > 0 else 0
+                dic['price'] = int(commenturl[1].extract().strip().replace('￥', '')) if len(commenturl) > 1 else 0
 
                 tagurl = item.xpath('.//div[@class="tag-addr"]//span[@class="tag"]')
                 dic['tag'] = tagurl.xpath('.//text()')[0].extract().strip() if tagurl else '_'
