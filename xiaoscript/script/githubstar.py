@@ -26,32 +26,45 @@ if 'Windows' in platform.platform():
     ps_file = 'C:\\Users\\xiaobao\\Desktop\\1.txt'
     out_file = 'C:\\Users\\xiaobao\\Desktop\\github.json'
 
-
 out_file2 = 'C:\\Users\\xiaobao\\Desktop\\github-lang.txt'
 
 focus_keys = ['id', 'full_name', 'description', 'language', 'stargazers_count', 'forks_count', 'url', 'git_url']
+
+start = 1000
+step = 50
+end = 2000
+# end = 7850
 
 
 def run():
     auth = get_auth()
 
-    # for i in range(1, 276):
-    for i in range(21, 22):
-        response = requests.get(url_fmt.format(i), auth=tuple(auth))
+    for i in range(start, end, step):
+        dic_list = []
 
-        time.sleep(random.random() * 3)
+        # 第一次请求
+        json_data = req(url_fmt.format(i, i + step, 1), auth)
+        dic_list.append(json_data)
 
-        json_data = response.json()
+        # 后续的请求
+        pg_num = get_pg_num(json_data['total_count'])
+        if pg_num > 2:
+            for j in range(2, pg_num):
+                json_data2 = req(url_fmt.format(i, i + step, j), auth)
+                dic_list.append(json_data2)
 
-        print(json_data)
+                break
 
         results = []
-        for item in json_data['items']:
-            dic = OrderedDict()
-            for key in focus_keys:
-                dic[key] = item[key]
 
-            results.append(dic)
+        # 保存数据
+        for json_data in dic_list:
+            for item in json_data['items']:
+                dic = OrderedDict()
+                for key in focus_keys:
+                    dic[key] = item[key]
+
+                results.append(dic)
 
         with open(out_file, 'a', encoding='utf-8') as fw:
             for item in results:
@@ -62,8 +75,24 @@ def run():
         sys.stdout.flush()
 
 
+def get_pg_num(count):
+    int_num = int(count / step)
+    float_num = count / step
+
+    if int_num == float_num:
+        return int_num + 1
+    else:
+        return int_num + 2
+
+
+def req(url, auth):
+    response = requests.get(url, auth=tuple(auth))
+    time.sleep(random.random() * 3)
+    return response.json()
+
+
 # url_fmt = 'https://api.github.com/search/repositories?q=stars:>1000&sort=stars&order=desc&page={}&per_page=100'
-url_fmt = 'https://api.github.com/search/repositories?q=stars:>1000&sort=stars&order=desc&page={}&per_page=50'
+url_fmt = 'https://api.github.com/search/repositories?q=stars:{}..{}&sort=stars&order=desc&page={}&per_page=50'
 
 
 def get_auth():
