@@ -13,14 +13,16 @@ from collections import OrderedDict, defaultdict
 import json
 import sys
 import matplotlib.pyplot as plt
+import time
+import random
 
 plt.rcParams['font.sans-serif'] = ['SimHei']
 
-# out_file = 'C:\\Users\\xiaobao\\Desktop\\github.json'
-out_file = '/mnt/home/baoqiang/github.json'
+out_file = 'C:\\Users\\xiaobao\\Desktop\\github.json'
+# out_file = '/mnt/home/baoqiang/github.json'
 
-# ps_file = 'C:\\Users\\xiaobao\\Desktop\\1.txt'
-ps_file = '/mnt/home/baoqiang/1.txt'
+ps_file = 'C:\\Users\\xiaobao\\Desktop\\1.txt'
+# ps_file = '/mnt/home/baoqiang/1.txt'
 
 out_file2 = 'C:\\Users\\xiaobao\\Desktop\\github-lang.txt'
 
@@ -31,7 +33,11 @@ def run():
     auth = get_auth()
 
     for i in range(1, 276):
+        # for i in range(1, 2):
         response = requests.get(url_fmt.format(i), auth=tuple(auth))
+
+        time.sleep(random.random() * 3)
+
         json_data = response.json()
 
         results = []
