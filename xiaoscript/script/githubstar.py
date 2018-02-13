@@ -46,6 +46,9 @@ def run():
         json_data = req(url_fmt2.format(i), auth)
         dic_list.append(json_data)
 
+        print('process large num cnt: {}'.format(i))
+        sys.stdout.flush()
+
     for i in range(start, end, step):
         # 第一次请求
         json_data = req(url_fmt.format(i, i + step, 1), auth)
@@ -60,7 +63,7 @@ def run():
 
                 # break
 
-        print('process cnt: {}'.format(i))
+        print('process batch cnt: {}'.format(i))
         sys.stdout.flush()
 
     # 保存数据
@@ -123,16 +126,59 @@ def count_lang():
         for item in sorted_dic:
             fw.write('{}\t{}\n'.format(item[0], item[1]))
 
-    plt.bar(dic.values(), color='b', labels=dic.keys())
+    # 整理dic,把小于1%的统一为other
+    dic = norm_dic(dic)
+
+    # plt.bar(range(len(dic)), dic.values(), color='b', tick_label=dic.keys())
+    # plt.show()
+
+    plt.pie(dic.values(), labels=get_labels(dic))
     plt.show()
 
-    plt.pie(dic.values(), labels=dic.keys())
-    plt.show()
+
+def norm_dic(dic):
+    total_cnt = sum(dic.values())
+
+    updated_dic = {}
+
+    other_cnt = 0
+    other_lst = []
+    for lang, cnt in dic.items():
+        if cnt / total_cnt <= 0.01:
+            other_cnt += cnt
+            other_lst.append(lang)
+        else:
+            updated_dic[lang] = cnt
+
+    other_key = ','.join(other_lst)
+    print('Other: {}'.format(other_key))
+    updated_dic['Other'] = other_cnt
+
+    sorted_lst = sorted(updated_dic.items(), key=lambda x: x[1], reverse=True)
+
+    sorted_dic = OrderedDict()
+
+    total = sum(dic.values())
+    for item in sorted_lst:
+        sorted_dic[item[0]] = item[1]
+        print('{}:{:.2f}%'.format(item[0], item[1] / total * 100))
+
+    return updated_dic
+
+
+def get_labels(dic):
+    percent_lst = []
+    total = sum(dic.values())
+    for key, value in dic.items():
+        fmt = '{}({:.2f}%)'.format(key, value / total * 100)
+        percent_lst.append(fmt)
+
+    return percent_lst
 
 
 def main():
-    run()
-    # count_lang()
+    # run()
+    count_lang()
 
 
 if __name__ == '__main__':
