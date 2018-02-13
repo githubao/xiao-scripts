@@ -44,7 +44,8 @@ url_fmt = 'https://api.github.com/search/repositories?sort=stars&order=desc&per_
 
 
 def get_auth():
-    with open('C:\\Users\\xiaobao\\Desktop\\1.txt', 'r', encoding='utf-8') as f:
+    # with open('C:\\Users\\xiaobao\\Desktop\\1.txt', 'r', encoding='utf-8') as f:
+    with open('/mnt/home/baoqiang/1.txt', 'r', encoding='utf-8') as f:
         return f.read().strip().split(' ')
 
 
