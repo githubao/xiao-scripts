@@ -115,16 +115,10 @@ def get_auth():
 def count_lang():
     dic = defaultdict(int)
 
-    with open(out_file, 'r', encoding='utf-8') as f, \
-            open(out_file2, 'w', encoding='utf-8') as fw:
+    with open(out_file, 'r', encoding='utf-8') as f:
         for line in f:
             json_data = json.loads(line.strip())
             dic[json_data['language']] += 1
-
-        sorted_dic = sorted(dic.items(), key=lambda x: x[1], reverse=True)
-
-        for item in sorted_dic:
-            fw.write('{}\t{}\n'.format(item[0], item[1]))
 
     # 整理dic,把小于1%的统一为other
     dic = norm_dic(dic)
@@ -133,6 +127,8 @@ def count_lang():
     # plt.show()
 
     plt.pie(dic.values(), labels=get_labels(dic))
+    plt.title("Github网站star>=1000的项目使用语言占比饼状图\n")
+    plt.axis('equal')
     plt.show()
 
 
@@ -161,7 +157,7 @@ def norm_dic(dic):
     total = sum(dic.values())
     for item in sorted_lst:
         sorted_dic[item[0]] = item[1]
-        print('{}:{:.2f}%'.format(item[0], item[1] / total * 100))
+        # print('{}:{:.2f}%'.format(item[0], item[1] / total * 100))
 
     return updated_dic
 
