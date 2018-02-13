@@ -8,9 +8,10 @@
 @time: 2018/2/11 15:54
 """
 
+import platform
 
 def main():
-    print('do sth')
+    print(platform.platform())
 
 
 if __name__ == '__main__':
