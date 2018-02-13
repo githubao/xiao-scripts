@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt
 
 plt.rcParams['font.sans-serif'] = ['SimHei']
 
-out_file = 'C:\\Users\\xiaobao\\Desktop\\github.json'
-# out_file = '/mnt/home/baoqiang/github.json'
+# out_file = 'C:\\Users\\xiaobao\\Desktop\\github.json'
+out_file = '/mnt/home/baoqiang/github.json'
 
-ps_file = 'C:\\Users\\xiaobao\\Desktop\\1.txt'
-# ps_file = '/mnt/home/baoqiang/1.txt'
+# ps_file = 'C:\\Users\\xiaobao\\Desktop\\1.txt'
+ps_file = '/mnt/home/baoqiang/1.txt'
 
 out_file2 = 'C:\\Users\\xiaobao\\Desktop\\github-lang.txt'
 
