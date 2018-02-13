@@ -35,13 +35,15 @@ focus_keys = ['id', 'full_name', 'description', 'language', 'stargazers_count', 
 def run():
     auth = get_auth()
 
-    for i in range(1, 276):
-        # for i in range(1, 2):
+    # for i in range(1, 276):
+    for i in range(21, 22):
         response = requests.get(url_fmt.format(i), auth=tuple(auth))
 
         time.sleep(random.random() * 3)
 
         json_data = response.json()
+
+        print(json_data)
 
         results = []
         for item in json_data['items']:
