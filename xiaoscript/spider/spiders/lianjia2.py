@@ -107,7 +107,10 @@ def update_dic(infourl, dic):
         value = item.xpath('./text()')[0].extract().strip()
 
         if name == '套内面积':
-            dic['size_inuse'] = float(value.replace('㎡', '').strip())
+            try:
+                dic['size_inuse'] = float(value.replace('㎡', '').strip())
+            except Exception as e:
+                dic['size_inuse'] = 0
 
         if name == '所在楼层':
             dic['floor'] = value
