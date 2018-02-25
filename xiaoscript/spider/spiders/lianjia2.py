@@ -68,7 +68,7 @@ class Lianjia2Spider(scrapy.Spider):
         dic['unit'] = float(body.xpath('.//span[@class="unitPriceValue"]/text()')[0].extract().strip())
 
         # 关注人数
-        dic['fav_cnt'] = int(body.xpath('.//span[@id="favCount"]/text()')[0].extract().strip())
+        dic['fav_count'] = int(body.xpath('.//span[@id="favCount"]/text()')[0].extract().strip())
 
         # 基本信息
         houseurl = body.xpath('.//div[@class="houseInfo"]')
@@ -83,8 +83,8 @@ class Lianjia2Spider(scrapy.Spider):
         # 位置信息
         areaurl = body.xpath('.//div[@class="areaName"]/span[contains(@class,"info")]//text()')
         dic['district'] = areaurl[0].extract().strip()
-        dic['town'] = areaurl[1].extract().strip()
-        dic['street'] = areaurl[2].extract().strip() if len(areaurl) > 2 else '_'
+        dic['town'] = areaurl[2].extract().strip()
+        dic['street'] = areaurl[3].extract().strip() if len(areaurl) > 2 else '_'
 
         # 地铁信息
         subwayurl = body.xpath('.//div[@class="areaName"]/a[@class="supplement"]/text()')
@@ -118,7 +118,7 @@ def update_dic(infourl, dic):
     transactionurl = infourl.xpath('./div[@class="transaction"]//ul/li')
     for item in transactionurl:
         name = item.xpath('./span/text()')[0].extract().strip()
-        value = item.xpath('./text()')[0].extract().strip()
+        value = item.xpath('./span/text()')[1].extract().strip()
 
         if name == '交易权属':
             dic['transact_type'] = value

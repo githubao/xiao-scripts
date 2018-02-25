@@ -12,19 +12,7 @@ import json
 
 root_path = 'C:\\Users\\xiaobao\\Desktop'
 
-
-def patch_dic(json_data):
-    areas = json_data['areas']
-
-    if len(areas) != 2 and len(areas) != 3:
-        print('err: {}'.format(json_data))
-
-    areas_str = '\t'.join(areas)
-    if len(areas) == 2:
-        areas_str += '\t '
-
-    json_data['areas'] = areas_str
-    del json_data['district']
+faraway_subways = ['桃园公寓', '冠雅苑', '温泉花园', '北亚花园', '沙河镇南一村', '沙河一通', '沙河地质研究院家属楼', '毛条小区']
 
 
 def process():
@@ -49,21 +37,42 @@ def process():
                 continue
 
             district = json_data['district']
-            if district not in ['昌平', '海淀']:
+            if district not in ['昌平', '海淀', '朝阳']:
                 continue
 
-            # 保证打印的area的格式
-            patch_dic(json_data)
+            fav_count = json_data['fav_count']
+            if fav_count < 100:
+                continue
 
-            sort_dic = sorted(json_data.items())
+            community = json_data['community']
+            if community in faraway_subways:
+                continue
+
+            # 粘贴到excel id显示异常的问题
+            json_data['id'] = 'A{}'.format(json_data['id'])
+
+            sort_dic = custom_sort(json_data)
 
             if not_print_key:
-                str = '\t'.join(item[0] for item in sort_dic)
-                fw.write('{}\n'.format(str))
+                key = '\t'.join(item[0] for item in sort_dic)
+                fw.write('{}\n'.format(key))
                 not_print_key = False
 
-            str = '\t'.join('{}'.format(item[1]) for item in sort_dic)
-            fw.write('{}\n'.format(str))
+            value = '\t'.join('{}'.format(item[1]) for item in sort_dic)
+            fw.write('{}\n'.format(value))
+
+
+def custom_sort(dic):
+    keys = ['id', 'title', 'price', 'size', 'fav_count',
+            'district', 'town', 'street', 'subway', 'community',
+            'floor', 'structure', 'direction',
+            'url', 'size_inuse', 'unit']
+    sorted_lst = []
+
+    for key in keys:
+        sorted_lst.append((key, dic[key]))
+
+    return sorted_lst
 
 
 def main():
@@ -74,23 +83,22 @@ if __name__ == '__main__':
     main()
 
 """
-链家显示28329个数据，爬虫20195条记录，19461条有效数据，去除价格&车位&燕郊&大小，剩下5924条
-海淀朝阳昌平一共有1673条
-"""
+希望的条件：
+300万以内，离地铁近而且尽量市里，2室1厅，50-70平，海淀、昌平或者朝阳。
 
-"""
-300万以内，离地铁近，2室1厅，50-70平，海淀或者昌平。
-"""
-
-"""
 必须的条件：
-1. 300万可接受，不可能超过400万
-2. 必须要在地铁附近
-3. 最好两室，酌情考虑1室
-4. 最好是南卧
-5. 无论如何不能小于40平，70平就非常好了
-6. 海淀或者朝阳的，第二选择昌平
+- 价格不大于400万
+- 位置要海淀朝阳昌平，不要车位和燕郊
+- 大小不小于40平
+- 关注度不小于100
+"""
 
+"""
+链家显示28329个数据，爬虫20856条记录，去除上面的四个条件，剩下570条
+"""
+
+"""
+具体房源
 
 300万以下：
 可选：
