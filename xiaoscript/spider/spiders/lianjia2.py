@@ -67,6 +67,9 @@ class Lianjia2Spider(scrapy.Spider):
             body.xpath('.//div[contains(@class,"price")]/span[@class="total"]/text()')[0].extract().strip())
         dic['unit'] = float(body.xpath('.//span[@class="unitPriceValue"]/text()')[0].extract().strip())
 
+        # 关注人数
+        dic['fav_cnt'] = int(body.xpath('.//span[@id="favCount"]/text()')[0].extract().strip())
+
         # 基本信息
         houseurl = body.xpath('.//div[@class="houseInfo"]')
         dic['structure'] = houseurl.xpath('./div[@class="room"]//text()')[0].extract().strip()
