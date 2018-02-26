@@ -12,7 +12,8 @@ import json
 
 root_path = 'C:\\Users\\xiaobao\\Desktop'
 
-faraway_subways = ['桃园公寓', '冠雅苑', '温泉花园', '北亚花园', '沙河镇南一村', '沙河一通', '沙河地质研究院家属楼', '毛条小区']
+faraway_communities = ['桃园公寓', '冠雅苑', '温泉花园', '北亚花园', '沙河镇南一村', '沙河一通', '沙河地质研究院家属楼', '毛条小区']
+faraway_towns = ['南口', '西关环岛']
 
 
 def process():
@@ -45,7 +46,19 @@ def process():
                 continue
 
             community = json_data['community']
-            if community in faraway_subways:
+            if community in faraway_communities:
+                continue
+
+            town = json_data['town']
+            if town in faraway_towns:
+                continue
+
+            floor = json_data['floor']
+            if '地下室' in floor:
+                continue
+
+            structure = json_data['structure']
+            if '房间' in structure:
                 continue
 
             # 粘贴到excel id显示异常的问题
