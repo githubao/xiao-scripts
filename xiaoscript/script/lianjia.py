@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 """
-@description: 
+@description: 链家爬虫的数据处理
 
 @author: pacman
 @time: 2018/2/11 11:34
