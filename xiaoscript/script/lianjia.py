@@ -12,6 +12,7 @@ import json
 
 root_path = 'C:\\Users\\xiaobao\\Desktop'
 
+
 faraway_communities = ['桃园公寓', '冠雅苑', '温泉花园', '北亚花园', '沙河镇南一村', '沙河一通', '沙河地质研究院家属楼', '毛条小区']
 faraway_towns = ['南口', '西关环岛']
 
