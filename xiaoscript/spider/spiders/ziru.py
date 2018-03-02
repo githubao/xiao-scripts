@@ -71,6 +71,9 @@ class ZiruSpider(scrapy.Spider):
             dic['title'] = item.xpath('.//div[@class="txt"]/h3//text()')[0].extract().strip()
             dic['sub_title'] = item.xpath('.//div[@class="txt"]/h4//text()')[0].extract().strip()
 
+            price_url = item.xpath('.//p[@class="price"]//text()')[0].extract().strip()
+            dic['price'] = price_url.replace('￥', '').strip()
+
             # 更新细节信息
             details_url = item.xpath('.//div[@class="txt"]/div[@class="detail"]/p')[0]
             update_dic(details_url, dic)
@@ -118,10 +121,10 @@ def parse_id(url):
 
 def get_pg_num(response):
     classes = response.selector.xpath('//div[@class="pages"]/a')
-    item = classes[-2]
-
-    if not item:
+    if len(classes) < 2:
         return 1
+
+    item = classes[-2]
 
     pg_num = item.xpath('./text()')[0].extract().strip()
     return int(pg_num)
