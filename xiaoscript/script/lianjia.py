@@ -12,13 +12,13 @@ import json
 
 root_path = 'C:\\Users\\xiaobao\\Desktop'
 
-
 faraway_communities = ['桃园公寓', '冠雅苑', '温泉花园', '北亚花园', '沙河镇南一村', '沙河一通', '沙河地质研究院家属楼', '毛条小区']
 faraway_towns = ['南口', '西关环岛']
 
-not_print_key = True
 
 def process():
+    not_print_key = True
+
     with open('{}/lianjia.json'.format(root_path), 'r', encoding='utf-8') as f, \
             open('{}/lianjia.txt'.format(root_path), 'w', encoding='utf-8') as fw:
         for idx, line in enumerate(f, start=1):
@@ -113,11 +113,13 @@ if __name__ == '__main__':
 """
 具体房源
 
+400万以下：
+霍营-华龙苑南里(霍营500m)
+立水桥-合立方(立水桥500m)
+
 300万以下：
-可选：
 沙河-民园小区(沙河2km)
 龙泽-龙华园(龙泽1km)
-回龙观-龙城花园(生命科学园1km)
 
 暂不考虑：
 沙河-北街家园(沙河高教园2.5km)
