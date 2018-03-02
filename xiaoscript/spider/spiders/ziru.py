@@ -72,7 +72,7 @@ class ZiruSpider(scrapy.Spider):
             dic['sub_title'] = item.xpath('.//div[@class="txt"]/h4//text()')[0].extract().strip()
 
             price_url = item.xpath('.//p[@class="price"]//text()')[0].extract().strip()
-            dic['price'] = price_url.replace('￥', '').strip()
+            dic['price'] = float(price_url.replace('￥', '').strip())
 
             # 更新细节信息
             details_url = item.xpath('.//div[@class="txt"]/div[@class="detail"]/p')[0]
