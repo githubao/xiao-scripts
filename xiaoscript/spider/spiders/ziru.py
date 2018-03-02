@@ -102,7 +102,7 @@ def update_dic(url, dic):
 
     try:
         if len(txts) > 0:
-            dic['size'] = float(txts[0].replace('㎡', '').strip())
+            dic['size'] = float(txts[0].replace('㎡', '').replace('约', '').strip())
         if len(txts) > 1:
             dic['floor'] = txts[1]
         if len(txts) > 2:
