@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import time
 import random
 import platform
+from github import Github
 
 plt.rcParams['font.sans-serif'] = ['SimHei']
 
@@ -172,9 +173,15 @@ def get_labels(dic):
     return percent_lst
 
 
+def github_api():
+    g = Github()
+    print(g.get_api_status())
+
+
 def main():
     # run()
-    count_lang()
+    # count_lang()
+    github_api()
 
 
 if __name__ == '__main__':

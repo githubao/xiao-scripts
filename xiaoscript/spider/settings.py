@@ -16,7 +16,13 @@ NEWSPIDER_MODULE = 'xiaoscript.spider.spiders'
 
 DOWNLOADER_MIDDLEWARES = {
     'xiaoscript.spider.middlewares.useragent.UserAgentMiddleware': 401,
+    'xiaoscript.spider.middlewares.httpproxy.HttpProxyWallMiddleware': 402,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+}
+
+ITEM_PIPELINES = {
+    # 'spider.pipelines.SpiderPipeline': 300,
+    # 'xiaoscript.spider.pipelines.jsonpipeline.JsonPipeline': 300
 }
 
 ROBOTSTXT_OBEY = False
