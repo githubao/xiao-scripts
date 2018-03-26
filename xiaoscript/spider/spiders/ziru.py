@@ -75,7 +75,7 @@ class ZiruSpider(scrapy.Spider):
             dic['price'] = float(price_url.replace('￥', '').strip())
 
             # 更新细节信息
-            details_url = item.xpath('.//div[@class="txt"]/div[@class="detail"]/p')[0]
+            details_url = item.xpath('.//div[@class="txt"]/div[@class="detail"]')
             update_dic(details_url, dic)
 
             results.append(dic)
@@ -99,7 +99,9 @@ class ZiruSpider(scrapy.Spider):
 
 
 def update_dic(url, dic):
-    txts_url = url.xpath('.//text()')
+    p0_url = url.xpath('./p')[0]
+
+    txts_url = p0_url.xpath('.//text()')
     txts = [item.extract().strip() for item in txts_url if item.extract().strip() != '|']
     txts = [item for item in txts if item]
 
@@ -110,8 +112,14 @@ def update_dic(url, dic):
             dic['floor'] = txts[1]
         if len(txts) > 2:
             dic['structure'] = txts[2]
+
     except Exception as e:
         traceback.print_exc()
+
+    p1_url = url.xpath('./p')
+    if len(p1_url) > 1:
+        subway_url = p1_url[1].xpath('.//text()')
+        dic['subway_distance'] = subway_url[0].extract().strip()
 
 
 def parse_id(url):

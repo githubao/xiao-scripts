@@ -9,6 +9,9 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
+USE_WALL_PROXY = False
+
+
 BOT_NAME = 'spider'
 
 SPIDER_MODULES = ['xiaoscript.spider.spiders']
@@ -16,9 +19,13 @@ NEWSPIDER_MODULE = 'xiaoscript.spider.spiders'
 
 DOWNLOADER_MIDDLEWARES = {
     'xiaoscript.spider.middlewares.useragent.UserAgentMiddleware': 401,
-    'xiaoscript.spider.middlewares.httpproxy.HttpProxyWallMiddleware': 402,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
 }
+
+if USE_WALL_PROXY:
+    DOWNLOADER_MIDDLEWARES.update({
+        'xiaoscript.spider.middlewares.httpproxy.HttpProxyWallMiddleware': 402,
+    })
 
 ITEM_PIPELINES = {
     # 'spider.pipelines.SpiderPipeline': 300,
