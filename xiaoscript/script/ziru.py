@@ -15,6 +15,7 @@ import re
 root_path = config.get_root_path()
 
 floor_pat = re.compile('([\d]+)/([\d]+)层')
+distance_pat = re.compile('([\d]+)米')
 
 processed_ids = set()
 
@@ -42,13 +43,13 @@ def process():
             else:
                 json_data['price'] = price
 
-            if json_data['price'] > 3500:
-                continue
+            # if json_data['price'] > 3500:
+            #     continue
 
             # 整租 或者 合租两居室
-            structure = json_data['structure']
-            if not ('1室' in structure or '2室' in structure):
-                continue
+            # structure = json_data['structure']
+            # if not ('1室' in structure or '2室' in structure):
+            #     continue
 
             # line = json_data['line']
             # if line not in ['13号线', '昌平线', '8号线', '5号线']:
@@ -73,6 +74,9 @@ def process():
             floor = json_data['floor']
             json_data['in_floor'], json_data['floor'] = split_floor(floor)
 
+            # 处理地铁线距离
+            json_data['subway_distance'] = trim_distance(json_data['subway_distance'])
+
             # 按照想要的key的顺序排序
             sorted_dic = custom_sort(json_data)
 
@@ -85,6 +89,13 @@ def process():
             fw.write('{}\t_\n'.format(value))
 
 
+def trim_distance(txt):
+    m = distance_pat.search(txt)
+    if m:
+        return m.group(1)
+    return txt
+
+
 def lst_contains(src, lst):
     for item in lst:
         if item in src:
@@ -94,12 +105,14 @@ def lst_contains(src, lst):
 
 def split_floor(floor):
     m = floor_pat.search(floor)
-    return m.groups()
+    if m:
+        return m.groups()
+    return 0, 0
 
 
 def custom_sort(dic):
     keys = ['id', 'title', 'price', 'size',
-            'line', 'subway',
+            'line', 'subway', 'subway_distance',
             'in_floor', 'floor', 'structure',
             'url', 'from_url', 'sub_title']
     sorted_lst = []
@@ -118,6 +131,9 @@ if __name__ == '__main__':
     main()
 
 """
+更新租房的条件：
+距离地铁必须近，10平米以上，朝南，3000以内。
+
 租房的条件：
 1. 价格不超过3500
 2. 最好能够整租，合租最多两居室
@@ -125,5 +141,4 @@ if __name__ == '__main__':
 4. 最好是高楼层
 5. 一定要是朝南的卧室
 6，面积必须要大于10平米
-
 """

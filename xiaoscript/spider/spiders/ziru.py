@@ -119,7 +119,7 @@ def update_dic(url, dic):
     p1_url = url.xpath('./p')
     if len(p1_url) > 1:
         subway_url = p1_url[1].xpath('.//text()')
-        dic['subway_distance'] = subway_url[0].extract().strip()
+        dic['distance'] = subway_url[0].extract().strip()
 
 
 def parse_id(url):
