@@ -97,7 +97,7 @@ def get_pg_num(count):
 
 
 def req(url, auth):
-    response = requests.get(url, auth=tuple(auth))
+    response = requests.get(url, auth=auth)
     time.sleep(random.random() * 3)
     return response.json()
 
@@ -110,7 +110,10 @@ url_fmt = 'https://api.github.com/search/repositories?q=stars:{}..{}&sort=stars&
 def get_auth():
     # with open(ps_file, 'r', encoding='utf-8') as f:
     with open(ps_file, 'r', encoding='utf-8') as f:
-        return f.read().strip().split(' ')
+        for line in f:
+            attr = line.strip().split(' ')
+
+            return attr[0], attr[1]
 
 
 def count_lang():
@@ -178,10 +181,27 @@ def github_api():
     print(g.get_api_status())
 
 
+def update_desc():
+    auth = get_auth()
+    # res = requests.get('https://api.github.com/user',auth=auth)
+    res = requests.post('https://api.github.com/user', auth=auth,
+                        json={'bio': 'programmer and practicer updated by api'})
+    print(res.json())
+
+
+def process_repo():
+    # url = 'https://api.github.com/user/repos'
+    url = 'https://api.github.com/repos/githubao/test-aaa'
+    res = requests.delete(url,auth=get_auth())
+    print(res)
+
+
 def main():
     # run()
     # count_lang()
-    github_api()
+    # github_api()
+    # update_desc()
+    process_repo()
 
 
 if __name__ == '__main__':
