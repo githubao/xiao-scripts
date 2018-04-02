@@ -38,10 +38,11 @@ def process():
 
             # 价格
             price = float(json_data['price'])
-            if price < 500:
-                json_data['price'] = price * 30
-            else:
-                json_data['price'] = price
+            json_data['price'] = price
+            # if price < 500:
+            #     json_data['price'] = price * 30
+            # else:
+            #     json_data['price'] = price
 
             # if json_data['price'] > 3500:
             #     continue
@@ -131,6 +132,14 @@ if __name__ == '__main__':
     main()
 
 """
+更新租房的条件again 2018-4-1 19:53:27：
+15平，三居室南卧，2500元，13号线，离地铁近
+
+离地铁近南向2000元以内三居：
+龙泽：新龙城，龙泽苑，龙华园
+回龙观：新龙城二期三期，龙博苑，龙腾苑
+霍营：旗胜家园，国风美唐，龙跃苑，华龙苑南里
+
 更新租房的条件：
 距离地铁必须近，10平米以上，朝南，3000以内。
 
