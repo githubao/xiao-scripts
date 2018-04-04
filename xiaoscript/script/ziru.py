@@ -75,7 +75,8 @@ def process():
             json_data['in_floor'], json_data['floor'] = split_floor(floor)
 
             # 处理地铁线距离
-            json_data['subway_distance'] = trim_distance(json_data['subway_distance'])
+            json_data['subway_distance'] = trim_distance(
+                json_data['subway_distance']) if 'subway_distance' in json_data else 0
 
             # 按照想要的key的顺序排序
             sorted_dic = custom_sort(json_data)
@@ -111,13 +112,17 @@ def split_floor(floor):
 
 
 def custom_sort(dic):
-    keys = ['id', 'title', 'price', 'size',
-            'line', 'subway', 'subway_distance',
-            'in_floor', 'floor', 'structure',
-            'url', 'from_url', 'sub_title']
+    # keys = ['id', 'title', 'price', 'size',
+    #         'line', 'subway', 'subway_distance',
+    #         'in_floor', 'floor', 'structure',
+    #         'url', 'from_url', 'sub_title']
+    keys2 = ['id', 'title', 'price', 'size',
+             'district', 'town', 'subway_distance',
+             'in_floor', 'floor', 'structure',
+             'url', 'from_url', 'sub_title']
     sorted_lst = []
 
-    for key in keys:
+    for key in keys2:
         sorted_lst.append((key, dic[key]))
 
     return sorted_lst
