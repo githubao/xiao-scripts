@@ -18,7 +18,7 @@ from xiaoscript import config
 
 start_url = 'http://www.ziroom.com/z/nl/z3.html'
 
-out_file = '{}/ziru.json'.format(config.get_root_path())
+out_file = '{}/ziru2.json'.format(config.get_root_path())
 
 id_pat = re.compile('http://www.ziroom.com/z/vr/([\d]+).html')
 
@@ -119,7 +119,7 @@ def update_dic(url, dic):
     p1_url = url.xpath('./p')
     if len(p1_url) > 1:
         subway_url = p1_url[1].xpath('.//text()')
-        dic['distance'] = subway_url[0].extract().strip()
+        dic['distance'] = subway_url[0].extract().strip() if subway_url else 0
 
 
 def parse_id(url):
