@@ -17,6 +17,12 @@ out_path = 'C:\\Users\\xiaobao\\Desktop\\'
 
 # 堆叠柱状图
 def stacked_histogram():
+    """
+    Supported formats:
+    eps, jpeg, jpg, pdf, pgf, png, ps, raw, rgba,
+    svg, svgz, tif, tiff.
+    :return:
+    """
     x = [1, 2, 3]
     y1 = np.array([2, 3, 2])
     y2 = np.array([3, 1, 5])

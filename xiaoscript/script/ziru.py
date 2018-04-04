@@ -37,15 +37,14 @@ def process():
                 processed_ids.add(uid)
 
             # 价格
-            price = float(json_data['price'])
-            json_data['price'] = price
+            # price = json_data['price']
             # if price < 500:
             #     json_data['price'] = price * 30
             # else:
             #     json_data['price'] = price
 
-            # if json_data['price'] > 3500:
-            #     continue
+            if json_data['price'] > 3000:
+                continue
 
             # 整租 或者 合租两居室
             # structure = json_data['structure']
@@ -62,9 +61,9 @@ def process():
                 continue
 
             # 房间朝向
-            title = json_data['title']
-            if '南' not in title:
-                continue
+            # title = json_data['title']
+            # if '南' not in title:
+            #     continue
 
             # 地理位置
             sub_title = json_data['sub_title']
