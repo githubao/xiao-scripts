@@ -23,8 +23,8 @@ processed_ids = set()
 def process():
     not_print_key = True
 
-    with open('{}/ziru.json'.format(root_path), 'r', encoding='utf-8') as f, \
-            open('{}/ziru.txt'.format(root_path), 'w', encoding='utf-8') as fw:
+    with open('{}/ziru2.json'.format(root_path), 'r', encoding='utf-8') as f, \
+            open('{}/ziru2.txt'.format(root_path), 'w', encoding='utf-8') as fw:
         for idx, line in enumerate(f, start=1):
             line = line.strip()
             json_data = json.loads(line.strip())
@@ -37,13 +37,11 @@ def process():
                 processed_ids.add(uid)
 
             # 价格
-            # price = json_data['price']
-            # if price < 500:
-            #     json_data['price'] = price * 30
-            # else:
-            #     json_data['price'] = price
-
-            if json_data['price'] > 3000:
+            price = json_data['price']
+            # 按照天数
+            if 100 < price < 1000:
+                continue
+            if price > 2700:
                 continue
 
             # 整租 或者 合租两居室
@@ -57,7 +55,7 @@ def process():
 
             # 房间大小
             size = json_data['size']
-            if size < 10:
+            if size < 15:
                 continue
 
             # 房间朝向
@@ -143,6 +141,10 @@ if __name__ == '__main__':
 龙泽：新龙城，龙泽苑，龙华园
 回龙观：新龙城二期三期，龙博苑，龙腾苑
 霍营：旗胜家园，国风美唐，龙跃苑，华龙苑南里
+
+更新租房的条件：
+1. 必须条件：朝南，装修不差，人不多，3000以内，离地铁站不远
+2. 宽松条件：尽可能便宜，离地铁近
 
 更新租房的条件：
 距离地铁必须近，10平米以上，朝南，3000以内。
