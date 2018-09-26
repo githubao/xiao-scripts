@@ -17,6 +17,7 @@ import time
 from collections import OrderedDict, defaultdict
 
 import requests
+import traceback
 
 try:
     from github import Github
@@ -35,7 +36,7 @@ out_file = '../data/github.json'
 
 out_file2 = 'C:\\Users\\xiaobao\\Desktop\\github-lang.txt'
 
-start = 500
+start = 1000
 step = 50
 end = 10000
 
@@ -50,16 +51,17 @@ def run():
     dic_list = []
 
     # 先star > 7850 的json
-    for i in range(1, 21):
-        json_data = req(url_fmt2.format(i), auth)
-        dic_list.append(json_data)
-
-        print('process large num cnt: {}'.format(i))
-        sys.stdout.flush()
+    # for i in range(1, 21):
+    #     json_data = req(url_fmt2.format(i), auth)
+    #     dic_list.append(json_data)
+    #
+    #     print('process large num cnt: {}'.format(i))
+    #     sys.stdout.flush()
 
     for i in range(start, end, step):
         # 第一次请求
         json_data = req(url_fmt.format(i, i + step, 1), auth)
+
         dic_list.append(json_data)
 
         # 后续的请求
@@ -107,9 +109,14 @@ def get_pg_num(count):
 
 
 def req(url, auth):
-    response = requests.get(url, auth=auth)
-    time.sleep(random.random() * 3)
-    return response.json()
+    for i in range(5):
+        try:
+            response = requests.get(url, auth=auth)
+            time.sleep(random.random() * 3)
+            return response.json()
+        except Exception as e:
+            print('req url: {} err occur: {}'.format(url,traceback.format_exc()))
+            time.sleep(10)
 
 
 url_fmt2 = 'https://api.github.com/search/repositories?q=stars:>1000&sort=stars&order=desc&page={}&per_page=50'
