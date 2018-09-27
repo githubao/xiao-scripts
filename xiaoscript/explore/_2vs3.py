@@ -4,6 +4,16 @@
 """
 @description: python2 和 python3 的一些不同
 
+1. with,print,除法等
+2. 没有reduce
+3. 字符编码的不同
+4. 之前好多python的方法，现在都返回迭代器，比如map,zip,filter,items,values()
+5. 好多方向被重命名，比如iteritems(), 比如xrange()
+6. raise语法 和 异常的as语法
+7. py3中不能调用.next()方法，只能使用next(generator)函数
+8. 没有了列表表达式里面的重名变量的全局空间泄漏
+9. py3使用input代替raw_input
+
 @author: baoqiang
 @time: 2018/9/27 下午12:21
 """
