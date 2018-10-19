@@ -39,7 +39,7 @@ class NuanfangSpider(scrapy.Spider):
 
 
 ## 8272个2500以下的房间
-url_fmt = 'https://nuan.io/get-room-results?rentType=shared&source%5B%5D=doubangroup&source%5B%5D=58&source%5B%5D=ganji&source%5B%5D=anjuke&source%5B%5D=soufang&source%5B%5D=nuan&bedroomAll=true&priceMax=2500&keyword=&city=bj&pageNo={}'
+url_fmt = 'https://nuan.io/get-room-results?rentType=shared&source%5B%5D=doubangroup&source%5B%5D=58&source%5B%5D=ganji&source%5B%5D=anjuke&source%5B%5D=soufang&source%5B%5D=nuan&bedroomAll=true&priceMin=2500&priceMax=3500&keyword=&city=bj&pageNo={}'
 
 
 def trim(title):

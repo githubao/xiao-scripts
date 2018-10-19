@@ -19,5 +19,7 @@ def get_root_path():
         root_path = '/mnt/home/baoqiang'
     elif 'Windows' in plt:
         root_path = 'C:\\Users\\xiaobao\\Desktop'
+    elif 'Darwin' in plt:
+        root_path = '/Users/baoqiang/Downloads'
 
     return root_path
