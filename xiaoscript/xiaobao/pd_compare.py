@@ -44,9 +44,12 @@ def to_excel():
     df = read_json(input_file)
 
     # 指定列的顺序
-    cols = ['id', 'subway', 'community', 'price', 'direction', 'size', 'town', 'area', 'url', 'from_url', 'floor',
-            'structure']
+    cols = ['id', 'subway', 'community', 'price', 'direction', 'size',
+            'shared', 'town', 'area', 'url', 'from_url', 'floor', 'structure']
     df = df.ix[:, cols]
+
+    # 去重id重复的记录
+    df = df.drop_duplicates('id')
 
     df.to_excel(out_file, index=False)
 

@@ -23,6 +23,7 @@ start_url = 'https://www.dankegongyu.com/room/bj'
 out_file = '{}/danke.json'.format(config.get_root_path())
 
 id_pat = re.compile('https://www.dankegongyu.com/room/([\d]+).html')
+id_pat2 = re.compile('https://www.dankegongyu.com/duanzu/([\d]+).html')
 
 
 class DankeSpider(scrapy.Spider):
@@ -43,6 +44,9 @@ class DankeSpider(scrapy.Spider):
                 area = subitem.xpath('./text()')[0].extract().strip()
                 url = subitem.xpath('./@href')[0].extract().strip()
 
+                if '朝阳区' != town:
+                    continue
+
                 logging.info('process : {} {}'.format(town, area))
 
                 yield Request(url, meta={'town': town, 'area': area}, callback=self.parse_page)
@@ -59,20 +63,24 @@ class DankeSpider(scrapy.Spider):
         for item in classes:
             dic = {'town': town, 'area': area, 'from_url': urllib.parse.unquote(response.url)}
 
+            # id
             location_url = item.xpath('./div[@class="r_lbx_cen"]/div[@class="r_lbx_cena"]/a')
             dic['url'] = location_url.xpath('./@href')[0].extract().strip()
             dic['id'] = parse_id(dic['url'])
 
+            # 位置和地铁
             location_str = location_url.xpath('./@title')[0].extract().strip()
             parse_location(location_str, dic)
-
             subway_url = item.xpath('./div[@class="r_lbx_cen"]/div[@class="r_lbx_cena"]/div[@class="r_lbx_cena"]')
             dic['subway'] = ''.join(i.extract().strip() for i in subway_url.xpath('./text()'))
 
+            # 大小和格局和合整租
             size_url = item.xpath('./div[@class="r_lbx_cen"]/div[@class="r_lbx_cenb"]')
             size_str = ''.join(i.extract().strip() for i in size_url.xpath('./text()'))
             parse_size(size_str, dic)
+            dic['shared'] = size_url.xpath('./i/text()')[0].extract().strip()
 
+            # 价格
             price_url = item.xpath('./div[@class="r_lbx_money"]/div[@class="r_lbx_moneya"]')
 
             first_month_url = price_url.xpath('./div[@class="room_price"]/em')
@@ -111,7 +119,14 @@ def parse_location(location_str, dic):
 
 def parse_id(url):
     m = id_pat.match(url)
-    return m.group(1) if m else 0
+    if m:
+        return m.group(1)
+
+    m = id_pat2.match(url)
+    if m:
+        return m.group(1)
+
+    return 0
 
 
 def get_next(response):
