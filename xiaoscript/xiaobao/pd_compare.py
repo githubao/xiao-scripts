@@ -30,7 +30,34 @@ def main():
     # find_null()
     # test_isin()
     # test_fmt()
-    to_excel()
+    # to_excel()
+    to_excel2()
+
+
+def to_excel2():
+    """
+    把json转成excel, 处理studygolang的文件
+    :return:
+    """
+    input_file = root_path + 'study_go.json'
+    out_file = root_path + 'study_go.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['id', 'title', 'read', 'tags', 'url', 'from_url', 'date']
+    df = df.ix[:, cols]
+
+    # 倒序排列
+    df.sort_values("read", inplace=True, ascending=False)
+
+    # 格式化tags
+    # df['tag'] = df['tag'].map(lambda x: str(x))
+
+    # df.to_excel(out_file, index=False)
+    writer = pd.ExcelWriter(out_file, engine='xlsxwriter')
+    df.to_excel(writer, index=False)
+    writer.save()
 
 
 def to_excel():
@@ -205,7 +232,7 @@ def run_item():
 
 
 def read_json(input_file):
-    with open(input_file, 'r') as f:
+    with open(input_file, 'r', encoding='utf-8') as f:
         datas = (line.strip() for line in f)
         datas = '[{}]'.format(','.join(datas))
 
