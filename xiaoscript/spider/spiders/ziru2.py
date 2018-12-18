@@ -50,7 +50,10 @@ class Ziru2Spider(scrapy.Spider):
                 if '全部' == town:
                     continue
 
-                yield Request(url, meta={'district': district,'town': town, 'start': True}, callback=self.parse_page)
+                if '朝阳' != district:
+                    continue
+
+                yield Request(url, meta={'district': district, 'town': town, 'start': True}, callback=self.parse_page)
 
                 # return
 
@@ -72,7 +75,8 @@ class Ziru2Spider(scrapy.Spider):
             dic['sub_title'] = item.xpath('.//div[@class="txt"]/h4//text()')[0].extract().strip()
 
             price_url = item.xpath('.//p[@class="price"]//text()')[0].extract().strip()
-            dic['price'] = float(price_url.replace('￥', '').strip())
+            # dic['price'] = float(price_url.replace('￥', '').strip())
+            dic['price'] = ""
 
             # 更新细节信息
             details_url = item.xpath('.//div[@class="txt"]/div[@class="detail"]')
@@ -93,7 +97,8 @@ class Ziru2Spider(scrapy.Spider):
 
             for i in range(2, num + 1):
                 req_url = '{}?p={}'.format(response.url, i)
-                yield Request(req_url, meta={'district': district, 'town': town, 'start': False}, callback=self.parse_page)
+                yield Request(req_url, meta={'district': district, 'town': town, 'start': False},
+                              callback=self.parse_page)
 
                 # break
 

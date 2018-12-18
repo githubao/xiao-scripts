@@ -37,12 +37,12 @@ def process():
                 processed_ids.add(uid)
 
             # 价格
-            price = json_data['price']
-            # 按照天数
-            if 100 < price < 1000:
-                continue
-            if price > 2700:
-                continue
+            # price = json_data['price']
+            # # 按照天数
+            # if 100 < price < 1000:
+            #     continue
+            # if price > 2700:
+            #     continue
 
             # 整租 或者 合租两居室
             # structure = json_data['structure']
@@ -64,9 +64,9 @@ def process():
             #     continue
 
             # 地理位置
-            sub_title = json_data['sub_title']
-            if not lst_contains(sub_title, ['朝阳', '海淀', '昌平']):
-                continue
+            # sub_title = json_data['sub_title']
+            # if not lst_contains(sub_title, ['朝阳', '海淀', '昌平']):
+            #     continue
 
             # 处理楼层
             floor = json_data['floor']

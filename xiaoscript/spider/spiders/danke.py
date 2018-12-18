@@ -78,7 +78,7 @@ class DankeSpider(scrapy.Spider):
             size_url = item.xpath('./div[@class="r_lbx_cen"]/div[@class="r_lbx_cenb"]')
             size_str = ''.join(i.extract().strip() for i in size_url.xpath('./text()'))
             parse_size(size_str, dic)
-            dic['shared'] = size_url.xpath('./i/text()')[0].extract().strip()
+            dic['shared'] = size_url.xpath('./i/text() or ./em/text()')[0].extract().strip()
 
             # 价格
             price_url = item.xpath('./div[@class="r_lbx_money"]/div[@class="r_lbx_moneya"]')

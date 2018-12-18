@@ -30,8 +30,101 @@ def main():
     # find_null()
     # test_isin()
     # test_fmt()
-    # to_excel()
-    to_excel2()
+    # to_excel_danke()
+    # to_excel_ziru()
+    # to_excel_miui()
+    # bookmarks_parse()
+    to_excel_jike()
+
+
+def to_excel_jike():
+    input_file = root_path + 'jike.json'
+    out_file = root_path + 'jike.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['topic_id', 'id', 'name', 'desc', 'count', 'web_url', 'topic_type',
+            'app_url', 'from_url', 'create_at', 'lastpost_at', 'update_at']
+    df = df.ix[:, cols]
+
+    # 去重id重复的记录
+    df = df.drop_duplicates('id')
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['count'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
+
+
+def bookmarks_parse():
+    input_file = root_path + 'Bookmarks.txt'
+
+    with open(input_file, 'r', encoding='utf-8') as f:
+        dic = json.loads(f.read())
+
+    for item in dic['roots']['bookmark_bar']['children'][16]['children']:
+        print(item['url'])
+
+
+def to_excel_miui():
+    """
+    小米主题的数据
+    :return:
+    """
+    input_file = root_path + 'miui.json'
+    out_file = root_path + 'miui.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['id', 'title', 'comment', 'price', 'url', 'rank']
+    df = df.ix[:, cols]
+
+    # 去重id重复的记录
+    df = df.drop_duplicates('id')
+
+    # 修改免费的记录
+    df['price'] = df['price'].map(lambda x: float('{}'.format(x).replace('免费', '0')))
+
+    # 只取comment不小于10的
+    df = df[df['comment'] >= 10]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['price', 'comment'], ascending=[True, False])
+
+    df.to_excel(out_file, index=False)
+
+
+def to_excel_ziru():
+    """
+    自如接口爬虫来的数据
+    :return:
+    """
+    house_url_fmt = 'http://www.ziroom.com/z/vr/{}.html'
+
+    input_file = root_path + 'ziru3.json'
+    out_file = root_path + 'ziru3.xlsx'
+
+    df = read_json(input_file)
+
+    # 添加url
+    df['url'] = df['id'].map(lambda x: house_url_fmt.format(x))
+
+    # 指定列的顺序
+    cols = ['id', 'subway_line_code_first', 'subway_station_code_first', 'sell_price',
+            'usage_area', 'house_facing', 'title', 'room_name', 'url', 'resblock_name',
+            'build_size', 'dispose_bedroom_amount', 'walking_distance_dt_first']
+    df = df.ix[:, cols]
+
+    # 去重id重复的记录
+    df = df.drop_duplicates('id')
+
+    # 去除"约"
+    df['usage_area'] = df['usage_area'].map(lambda x: float('{}'.format(x).replace('约', '')))
+    df['build_size'] = df['build_size'].map(lambda x: float('{}'.format(x).replace('约', '')))
+
+    df.to_excel(out_file, index=False)
 
 
 def to_excel2():
@@ -60,7 +153,7 @@ def to_excel2():
     writer.save()
 
 
-def to_excel():
+def to_excel_danke():
     """
     把json转成excel
     :return:
