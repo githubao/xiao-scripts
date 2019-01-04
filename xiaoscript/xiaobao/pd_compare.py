@@ -34,7 +34,27 @@ def main():
     # to_excel_ziru()
     # to_excel_miui()
     # bookmarks_parse()
-    to_excel_jike()
+    # to_excel_jike()
+    to_excel_wandou()
+
+
+def to_excel_wandou():
+    input_file = root_path + 'wandou2.json'
+    out_file = root_path + 'wandou2.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['id', 'title', 'comment', 'cnt', 'cate1', 'cate2', 'url', 'cate_url', 'from_url', 'cate1_id', 'cate2_id']
+    df = df.ix[:, cols]
+
+    # 去重id重复的记录
+    df = df.drop_duplicates('id')
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['cnt'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
 
 
 def to_excel_jike():
