@@ -22,7 +22,7 @@ class StudyGoSpider(scrapy.Spider):
     name = 'studygo'
 
     def start_requests(self):
-        for i in range(1, 798):
+        for i in range(1, 908):
         # for i in range(1, 3):
             url = url_fmt.format(i)
             yield FormRequest(url, callback=self.parse_cate)

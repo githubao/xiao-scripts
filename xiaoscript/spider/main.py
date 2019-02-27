@@ -12,7 +12,7 @@ from scrapy import cmdline
 
 
 def run():
-    cmdline.execute('scrapy crawl wandou2'.split())
+    # cmdline.execute('scrapy crawl wandou2'.split())
     # cmdline.execute('scrapy crawl wandou'.split())
     # cmdline.execute('scrapy crawl jike'.split())
     # cmdline.execute('scrapy crawl ziru'.split())
@@ -23,7 +23,7 @@ def run():
     # cmdline.execute('scrapy crawl lianjia2'.split())
     # cmdline.execute('scrapy crawl dianping'.split())
     # cmdline.execute('scrapy crawl telegram'.split())
-    # cmdline.execute('scrapy crawl studygo'.split())
+    cmdline.execute('scrapy crawl studygo'.split())
 
 
 def main():

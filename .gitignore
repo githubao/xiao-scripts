@@ -1,4 +1,6 @@
 .idea/
+xiaoscript/spider/spiders/eecode.py
+xiaoscript/script/scrapy_tce.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

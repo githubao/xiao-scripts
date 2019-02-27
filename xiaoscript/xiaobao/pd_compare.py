@@ -35,7 +35,52 @@ def main():
     # to_excel_miui()
     # bookmarks_parse()
     # to_excel_jike()
-    to_excel_wandou()
+    # to_excel_wandou()
+    # to_excel_github()
+    # to_cloud()
+    to_excel_studygo()
+
+
+def to_cloud():
+    input_file = root_path + 'cloud.json'
+    out_file = root_path + 'cloud.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['id', 'url', 'psm', 'owner', 'create_at', 'total']
+    df = df.ix[:, cols]
+
+    # 过滤
+    df = df[~df['psm'].str.contains('deleted')]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['total', 'create_at'], ascending=[False, False])
+
+    df.to_excel(out_file, index=False)
+
+
+def to_excel_github():
+    input_file = root_path + 'github.json'
+    out_file = root_path + 'github.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['id', 'url', 'name', 'language', 'description',
+            'forks', 'stars', 'created_at', 'updated_at']
+    df = df.ix[:, cols]
+
+    # 去重id重复的记录
+    df = df.drop_duplicates('id')
+
+    # 排序
+    df['score'] = df['forks'] + df['stars']
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['score'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
 
 
 def to_excel_wandou():
@@ -147,7 +192,7 @@ def to_excel_ziru():
     df.to_excel(out_file, index=False)
 
 
-def to_excel2():
+def to_excel_studygo():
     """
     把json转成excel, 处理studygolang的文件
     :return:
@@ -158,7 +203,8 @@ def to_excel2():
     df = read_json(input_file)
 
     # 指定列的顺序
-    cols = ['id', 'title', 'read', 'tags', 'url', 'from_url', 'date']
+    # cols = ['id', 'title', 'read', 'tags', 'url', 'from_url', 'date']
+    cols = ['id', 'title', 'read', 'tags', 'url', 'date']
     df = df.ix[:, cols]
 
     # 倒序排列
@@ -166,6 +212,9 @@ def to_excel2():
 
     # 格式化tags
     # df['tag'] = df['tag'].map(lambda x: str(x))
+
+    # 删除name相同的列
+    df.drop_duplicates(subset="title", keep='first', inplace=True)
 
     # df.to_excel(out_file, index=False)
     writer = pd.ExcelWriter(out_file, engine='xlsxwriter')

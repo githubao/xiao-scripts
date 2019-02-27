@@ -18,6 +18,7 @@ from collections import OrderedDict, defaultdict
 
 import requests
 import traceback
+from xiaoscript.config import get_root_path
 
 try:
     from github import Github
@@ -27,12 +28,8 @@ except:
 
 # plt.rcParams['font.sans-serif'] = ['SimHei']
 
-ps_file = '/home/baoqiang/data/ps.txt'
-out_file = '../data/github.json'
-
-# if 'Windows' in platform.platform():
-#     ps_file = 'C:\\Users\\xiaobao\\Desktop\\1.txt'
-#     out_file = 'C:\\Users\\xiaobao\\Desktop\\github.json'
+ps_file = '{}/ps.txt'.format(get_root_path())
+out_file = '{}/github.json'.format(get_root_path())
 
 out_file2 = 'C:\\Users\\xiaobao\\Desktop\\github-lang.txt'
 
@@ -50,13 +47,13 @@ def run():
     # 保存所有请求回来的json
     dic_list = []
 
-    # 先star > 7850 的json
-    # for i in range(1, 21):
-    #     json_data = req(url_fmt2.format(i), auth)
-    #     dic_list.append(json_data)
-    #
-    #     print('process large num cnt: {}'.format(i))
-    #     sys.stdout.flush()
+    # 先star > 10000 的json
+    for i in range(1, 21):
+        json_data = req(url_fmt.format(i), auth)
+        dic_list.append(json_data)
+
+        print('process large num cnt: {}'.format(i))
+        sys.stdout.flush()
 
     for i in range(start, end, step):
         # 第一次请求
@@ -81,6 +78,15 @@ def run():
     # 保存数据
     result_dic = {}
     for json_data in dic_list:
+        if 'items' not in json_data:
+            print('err: {}'.format(json_data))
+            continue
+
+        if len(json_data['items']) < 3:
+            print('err: {}'.format(json_data))
+
+        print('count: {}'.format(json_data['total_count']))
+
         for item in json_data['items']:
             _hack(item)
             dic = OrderedDict()
@@ -90,7 +96,8 @@ def run():
             result_dic[dic['id']] = dic
 
     # 排序
-    sorted_dic = sorted(result_dic.items(), key=lambda x: x[1]['stars'] + x[1]['forks'], reverse=True)
+    # sorted_dic = sorted(result_dic.items(), key=lambda x: x[1]['stars'] + x[1]['forks'], reverse=True)
+    sorted_dic = sorted(result_dic.items(), key=lambda x: x[1]['stars'], reverse=True)
 
     with open(out_file, 'a', encoding='utf-8') as fw:
         for item in sorted_dic:
@@ -109,19 +116,21 @@ def get_pg_num(count):
 
 
 def req(url, auth):
+    # print(url)
+    # return {}
+
     for i in range(5):
         try:
             response = requests.get(url, auth=auth)
-            time.sleep(random.random() * 3)
+            # time.sleep(random.random() * 3)
             return response.json()
         except Exception as e:
-            print('req url: {} err occur: {}'.format(url,traceback.format_exc()))
-            time.sleep(10)
+            print('req url: {} err occur: {}'.format(url, traceback.format_exc()))
+            time.sleep(random.random() * 3)
 
 
-url_fmt2 = 'https://api.github.com/search/repositories?q=stars:>1000&sort=stars&order=desc&page={}&per_page=50'
-
-url_fmt = 'https://api.github.com/search/repositories?q=stars:{}..{}&sort=stars&order=desc&page={}&per_page=50'
+url_fmt = 'https://api.github.com/search/repositories?q=stars:>10000&sort=stars&order=desc&page={}&per_page=50'
+url_fmt2 = 'https://api.github.com/search/repositories?q=stars:{}..{}&sort=stars&order=desc&page={}&per_page=50'
 
 
 def get_auth():
