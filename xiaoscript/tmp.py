@@ -18,6 +18,22 @@ hanzi_pat = re.compile('[\u4e00-\u9fa5]')
 
 
 def tmp():
+    run_recom()
+
+
+def run_recom():
+    # token_re = re.compile("([€α%゜∮])([a-zA-Z0-9]{11})([a-f0-9XQZ])(\\1)", re.M)
+    token_re = re.compile("([€α%゜∮])([a-zA-Z0-9]{11})([a-f0-9XQZ])([€α%゜∮])", re.M)
+    s = '''你用过多闪不？我刚用了觉得蛮好玩的，来多闪加我呀~
+【长按复制此暗号打开多闪即可加我】
+∮JUr3z1yWDM11∮
+我的ID ds666666'''
+    # s = '∮DSrqAiBq77B9∮'
+    m = token_re.search(s)
+    if m:
+        print(m.group())
+
+def tmp9():
     """
     1744348368
     :return:

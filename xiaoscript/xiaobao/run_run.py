@@ -19,6 +19,7 @@ import time
 import uuid
 import datetime
 import os
+import re
 from collections import OrderedDict
 
 
@@ -38,8 +39,10 @@ def run():
     # test_mkdir()
     # test_uuid()
     # test_beauty_print()
-    test_httpbin()
-
+    # test_httpbin()
+    # run_recom()
+    # run_recom()
+    test_days()
 
 def test_httpbin():
     url = 'http://httpbin.org/post'
