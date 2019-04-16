@@ -2,6 +2,8 @@
 xiaoscript/spider/spiders/eecode.py
 xiaoscript/script/scrapy_tce.py
 
+xiaoscript/product/metastore_db/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

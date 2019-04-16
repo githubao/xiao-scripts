@@ -21,7 +21,7 @@ try:
 except ImportError:
     raise
 
-line_source = {
+line_hex = {
     "1号线": "#A4343A",
     "八通线": "#A4343A",
     "2号线": "#004B87",
@@ -46,10 +46,35 @@ line_source = {
     "机场线": "#A192B2",
 }
 
+line_color = {
+    "1号线": "正红色",
+    "八通线": "正红色",
+    "2号线": "蓝色",
+    "4号线": "青绿色",
+    "大兴线": "青绿色",
+    "5号线": "紫色",
+    "6号线": "土黄色",
+    "7号线": "淡黄色",
+    "8号线": "深绿色",
+    "9号线": "淡绿色",
+    "10号线": "天蓝色",
+    "13号线": "藤黄色",
+    "14号线": "淡粉色",
+    "15号线": "紫罗兰色",
+    "16号线": "草绿色",
+    "亦庄线": "桃红色",
+    "房山线": "橙红色",
+    "燕房线": "橙红色",
+    "S1线": "棕色",
+    "昌平线": "嫩粉色",
+    "西郊线": "朱红色",
+    "机场线": "银灰色",
+}
+
 
 def colored():
-    for line, source in line_source.items():
-        r, g, b = hex2rgb(source)
+    for line, hex_ in line_hex.items():
+        r, g, b = hex2rgb(hex_)
 
         # r, g, b = (255, 10, 10)
 
@@ -60,10 +85,10 @@ def colored():
 
 
 def convert():
-    for line, source in line_source.items():
+    for line, hex_ in line_hex.items():
         # name = webcolors.hex_to_name(rgb)
 
-        rgb = hex2rgb(source)
+        rgb = hex2rgb(hex_)
 
         _, closest = get_colour_name(rgb)
 

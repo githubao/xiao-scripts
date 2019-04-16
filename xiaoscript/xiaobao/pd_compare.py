@@ -38,7 +38,73 @@ def main():
     # to_excel_wandou()
     # to_excel_github()
     # to_cloud()
-    to_excel_studygo()
+    # to_excel_studygo()
+    to_mobile2()
+
+
+def to_mobile2():
+    """
+    excel 重复行去重
+    :return:
+    """
+    # input_file = root_path + '1.xlsx'
+    # out_file = root_path + '1_out.xlsx'
+
+    input_file = root_path + 'bbb.xlsx'
+    out_file = root_path + 'bbb_out.xlsx'
+
+    df = read_excel(input_file)
+
+    # 先过滤掉"未接通"的字段
+    df = df[~((df['意向标签'].str.contains('F')) & (df['统计计数'] > 0))]
+    df = df[~((df['意向标签'].str.contains('W')) & (df['统计计数'] > 0))]
+
+    # 通话时长降序(最长的在最前面)，通话时间升序(最早的在前面)
+    df = df.sort_values(by=['通话时长', '通话时间'], ascending=[False, True])
+
+    # 去掉mobile重复的数据，只留下第一个
+    df.drop_duplicates(subset=['电话'], keep='first', inplace=True)
+
+    # 手机号升序，计数降序
+    df = df.sort_values(by=['电话', '统计计数'], ascending=[True, False])
+
+    # 指定列的顺序
+    cols = ['电话', '名称', '主叫号码', '意向标签', '意向备注', '通话时长', '通话时间',
+            '企业', '备注', '对话记录', '账号', '所属者', '挂机原因', '参数1', '参数2', '参数3', '统计计数']
+    df = df.ix[:, cols]
+
+    df.to_excel(out_file, index=False)
+
+
+def to_mobile():
+    """
+    excel 重复行去重
+    :return:
+    """
+    # input_file = root_path + '1.xlsx'
+    # out_file = root_path + '1_out.xlsx'
+
+    input_file = root_path + '222.xlsx'
+    out_file = root_path + 'love.xlsx'
+
+    df = read_excel(input_file)
+
+    # 先过滤掉"未接通"的字段
+    df = df[~((df['跟进记录'].str.contains('未接通')) & (df['统计计数'] > 1))]
+    # df = df[~(df['跟进记录'].str.contains('未接通'))]
+
+    # 去掉mobile重复的数据，只留下第一个
+    df.drop_duplicates(subset=['电话'], keep='first', inplace=True)
+
+    # 手机号升序，计数降序
+    df = df.sort_values(by=['电话', '统计计数'], ascending=[True, False])
+
+    # 指定列的顺序
+    cols = ['城市', '线索ID', '客户ID', '客户姓名', '客户性别', '销售ID', '电话',
+            '城市_1', '购车城市', '意向标签', '对话记录', '意向备注', '跟进销售', '跟进记录', '统计计数']
+    df = df.ix[:, cols]
+
+    df.to_excel(out_file, index=False)
 
 
 def to_cloud():
