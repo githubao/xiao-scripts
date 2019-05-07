@@ -11,6 +11,7 @@
 import pandas as pd
 import json
 import sys
+from hanziconv import HanziConv
 
 # from pyspark.sql import functions as F
 # from pyspark import HiveContext, SparkContext
@@ -39,7 +40,123 @@ def main():
     # to_excel_github()
     # to_cloud()
     # to_excel_studygo()
-    to_mobile2()
+    # to_mobile2()
+    # to_coolshell()
+    # to_github_star()
+    # to_first_record()
+    to_trip()
+    # file_to_json()
+
+
+def file_to_json():
+    """
+    把文件数据转化为json
+    :return:
+    """
+    with open(root_path + '1.txt', 'r', encoding='utf-8') as f, \
+            open(root_path + '2.txt', 'w', encoding='utf-8') as fw:
+        for idx, line in enumerate(f, start=1):
+            attrs = line.strip().split('\t')
+
+            dic = {'title': attrs[0], 'tag': attrs[1], 'rank': idx}
+
+            json.dump(dic, fw, ensure_ascii=False, sort_keys=True)
+            fw.write('\n')
+
+
+def to_trip():
+    input_file = root_path + 'bj_tour.json'
+    out_file = root_path + 'bj_tour.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['rank', 'title', 'tag']
+    df = df.ix[:, cols]
+
+    # 繁简转化
+    df['title'] = df['title'].apply(lambda x: simplify(x))
+    df['tag'] = df['tag'].apply(lambda x: simplify(x))
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['rank'], ascending=[True])
+
+    df.to_excel(out_file, index=False)
+
+
+def simplify(traditional):
+    return HanziConv.toSimplified(traditional)
+
+
+def to_first_record():
+    """
+    相同手机号保留时间最小的那条记录
+    :return:
+    """
+    input_file = root_path + '1.xlsx'
+    out_file = root_path + '1_out.xlsx'
+
+    df = read_excel(input_file)
+
+    # 通话时间升序(最早的在前面)
+    df = df.sort_values(by=['通话时间'], ascending=[True])
+
+    # 去掉mobile重复的数据，只留下第一个
+    df.drop_duplicates(subset=['电话'], keep='first', inplace=True)
+
+    # 手机号升序，计数降序
+    df = df.sort_values(by=['电话'], ascending=[True])
+
+    # 指定列的顺序
+    cols = ['电话', '名称', '主叫号码', '意向标签', '意向备注', '通话时长', '通话时间',
+            '企业', '备注', '对话记录', '账号', '所属者', '挂机原因', '参数1', '参数2', '参数3']
+    df = df.ix[:, cols]
+
+    df.to_excel(out_file, index=False)
+
+
+def to_github_star():
+    input_file = root_path + 'github.json'
+    out_file = root_path + 'github.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['id', 'url', 'name', 'description', 'forks',
+            'stars', 'created_at', 'updated_at', 'full_name']
+    df = df.ix[:, cols]
+
+    # 添加超链接
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['stars'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
+
+
+def to_coolshell():
+    input_file = root_path + 'coolshell.json'
+    out_file = root_path + 'coolshell.xlsx'
+
+    df = read_json(input_file)
+
+    # 指定列的顺序
+    cols = ['id', 'title', 'url', 'read_count', 'comment_count', 'rate_count', 'rate_avg', 'time']
+    df = df.ix[:, cols]
+
+    # 添加超链接
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['read_count'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
+
+
+def make_hyperlink(value):
+    # url = "https://custom.url/{}"
+    return '=HYPERLINK("%s", "%s")' % (value, value)
 
 
 def to_mobile2():
