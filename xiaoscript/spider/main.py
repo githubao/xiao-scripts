@@ -25,7 +25,8 @@ def run():
     # cmdline.execute('scrapy crawl telegram'.split())
     # cmdline.execute('scrapy crawl studygo'.split())
     # cmdline.execute('scrapy crawl cool_shell'.split())
-    cmdline.execute('scrapy crawl trip_advisor'.split())
+    # cmdline.execute('scrapy crawl trip_advisor'.split())
+    cmdline.execute('scrapy crawl kaola'.split())
 
 
 def main():
