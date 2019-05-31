@@ -11,10 +11,9 @@
 
 USE_WALL_PROXY = False
 
-
 BOT_NAME = 'spider'
 
-SPIDER_MODULES = ['xiaoscript.spider.spiders']
+SPIDER_MODULES = ['xiaoscript.spider.spiders', 'xiaoscript.spider.spiders2']
 NEWSPIDER_MODULE = 'xiaoscript.spider.spiders'
 
 DOWNLOADER_MIDDLEWARES = {

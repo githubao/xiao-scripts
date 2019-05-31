@@ -44,8 +44,58 @@ def main():
     # to_coolshell()
     # to_github_star()
     # to_first_record()
-    to_trip()
+    # to_trip()
     # file_to_json()
+    # to_kaola()
+    to_jianshu()
+
+
+def to_jianshu():
+    input_file = root_path + 'jianshu.json'
+    out_file = root_path + 'jianshu.xlsx'
+
+    df = read_json(input_file)
+
+    # 添加超链接
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
+
+    rate = df['count'].sum() / df['follow'].sum()
+
+    # score
+    df['score'] = rate * df['count'] + df['follow']
+
+    # 指定列的顺序
+    cols = ['id', 'name', 'url', 'count', 'follow', 'from_url', 'score']
+    df = df.loc[:, cols]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['score'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
+
+
+def to_kaola():
+    url_fmt = 'https://search.kaola.com/brand/{}.html'
+
+    input_file = root_path + 'kaola.json'
+    out_file = root_path + 'kaola.xlsx'
+
+    df = read_json(input_file)
+
+    # 去掉重复的bid的记录，只留下第一个
+    df.drop_duplicates(subset=['bid'], keep='first', inplace=True)
+
+    # 添加超链接
+    df['url'] = df['bid'].apply(lambda x: make_hyperlink(url_fmt.format(x)))
+
+    # 指定列的顺序
+    cols = ['bid', 'bname', 'favor_cnt', 'url', 'cname', 'subname', 'cid', 'subcid']
+    df = df.loc[:, cols]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['favor_cnt'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
 
 
 def file_to_json():
