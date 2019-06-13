@@ -13,7 +13,8 @@ from scrapy import Request
 import json
 
 # out_file = 'C:\\Users\\xiaobao\\Desktop\\lianjia.json'
-out_file = '/mnt/home/baoqiang/lianjia.json'
+# out_file = '/mnt/home/baoqiang/lianjia.json'
+out_file = '/Users/baoqiang/Downloads/lianjia.json'
 
 
 class Lianjia2Spider(scrapy.Spider):
@@ -44,7 +45,7 @@ class Lianjia2Spider(scrapy.Spider):
 
     def parse_list(self, response):
         classes = response.selector.xpath(
-            '//ul[@class="sellListContent"]//li[@class="clear"]//div[@class="title"]/a/@href')
+            '//ul[@class="sellListContent"]//li[contains(@class,"clear")]//div[@class="title"]/a/@href')
 
         for item in classes:
             url = item.extract().strip()

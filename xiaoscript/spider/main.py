@@ -20,14 +20,14 @@ def run():
     # cmdline.execute('scrapy crawl nuanfang'.split())
     # cmdline.execute('scrapy crawl danke'.split())
     # cmdline.execute('scrapy crawl miui'.split())
-    # cmdline.execute('scrapy crawl lianjia2'.split())
+    cmdline.execute('scrapy crawl lianjia2'.split())
     # cmdline.execute('scrapy crawl dianping'.split())
     # cmdline.execute('scrapy crawl telegram'.split())
     # cmdline.execute('scrapy crawl studygo'.split())
     # cmdline.execute('scrapy crawl cool_shell'.split())
     # cmdline.execute('scrapy crawl trip_advisor'.split())
     # cmdline.execute('scrapy crawl kaola'.split())
-    cmdline.execute('scrapy crawl jianshu_collection'.split())
+    # cmdline.execute('scrapy crawl jianshu_collection'.split())
 
 
 def main():

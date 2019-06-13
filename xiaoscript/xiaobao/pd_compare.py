@@ -49,7 +49,6 @@ def main():
     # to_kaola()
     to_jianshu()
 
-
 def to_jianshu():
     input_file = root_path + 'jianshu.json'
     out_file = root_path + 'jianshu.xlsx'
@@ -59,13 +58,13 @@ def to_jianshu():
     # 添加超链接
     df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
 
-    rate = df['count'].sum() / df['follow'].sum()
+    rate = df['follow'].sum() / df['count'].sum()
 
     # score
     df['score'] = rate * df['count'] + df['follow']
 
     # 指定列的顺序
-    cols = ['id', 'name', 'url', 'count', 'follow', 'from_url', 'score']
+    cols = ['id', 'name', 'url', 'desc', 'score', 'from_url', 'count', 'follow', ]
     df = df.loc[:, cols]
 
     # 按照多个字段排序
