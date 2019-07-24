@@ -50,7 +50,10 @@ class Ziru2Spider(scrapy.Spider):
                 if '全部' == town:
                     continue
 
-                if '朝阳' != district:
+                # if '朝阳' != district:
+                #     continue
+
+                if '海淀' != district:
                     continue
 
                 yield Request(url, meta={'district': district, 'town': town, 'start': True}, callback=self.parse_page)

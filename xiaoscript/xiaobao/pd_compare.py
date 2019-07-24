@@ -47,7 +47,54 @@ def main():
     # to_trip()
     # file_to_json()
     # to_kaola()
-    to_jianshu()
+    # to_jianshu()
+    # to_jdbook()
+    read_csv()
+
+
+def read_csv():
+    filename = root_path + '1.csv'
+    df = pd.read_csv(filename)
+
+    for idx, row in df.iterrows():
+        print(idx, row['name'], row[1])
+
+
+def to_jdbook():
+    input_file = root_path + 'jdbook.json'
+    out_file = root_path + 'jdbook.xlsx'
+
+    df = read_json(input_file)
+
+    # end symbol
+    df['hhh'] = pd.Series(['_'] * df.shape[0])
+
+    # 过滤
+    df = df[df['cnt'] >= 10000]
+
+    # 去重
+    df.drop_duplicates(subset=['id'], keep='first', inplace=True)
+
+    # 添加超链接
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
+    df['from_url'] = df['from_url'].apply(lambda x: make_hyperlink(x))
+
+    # separate
+    df['cate2'] = df['cate'].apply(lambda x: x.split('/')[1])
+    df['cate3'] = df['cate'].apply(lambda x: x.split('/')[2])
+
+    # 类别过滤
+    df = df[(df['cate2'] == "计算机与互联网") | (df['cate2'] == "文学")]
+
+    # 指定列的顺序
+    cols = ['id', 'cate2', 'cate3', 'name', 'url', 'cnt', 'from_url', 'hhh']
+    df = df.loc[:, cols]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['cnt'], ascending=[False])
+
+    df.to_excel(out_file, index=False)
+
 
 def to_jianshu():
     input_file = root_path + 'jianshu.json'
@@ -412,10 +459,13 @@ def to_excel_ziru():
     cols = ['id', 'subway_line_code_first', 'subway_station_code_first', 'sell_price',
             'usage_area', 'house_facing', 'title', 'room_name', 'url', 'resblock_name',
             'build_size', 'dispose_bedroom_amount', 'walking_distance_dt_first']
-    df = df.ix[:, cols]
+    df = df.loc[:, cols]
 
     # 去重id重复的记录
     df = df.drop_duplicates('id')
+
+    # 添加超链接
+    df['url'] = df['url'].map(lambda x: make_hyperlink(x))
 
     # 去除"约"
     df['usage_area'] = df['usage_area'].map(lambda x: float('{}'.format(x).replace('约', '')))

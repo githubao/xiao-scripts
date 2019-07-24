@@ -59,7 +59,14 @@ def process_pd():
     df['id'] = df['id'].apply(lambda x: 'A{}'.format(x))
 
     # 过滤
-    df = df[(df['price'] <= 400) & (df['size'] >= 50) & (~df['structure'].str.contains('1室'))]
+    df = df[(df['price'] >= 300) & (df['price'] <= 450) & (df['size'] >= 70)]
+
+    # 过滤
+    df = df[(~df['structure'].str.contains('房间')) & (~df['floor'].str.contains('地下室'))
+            & (~df['structure'].str.contains('1室'))]
+
+    # 添加超链接
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
 
     # 指定列的顺序
     cols = ['id', 'title', 'price', 'size', 'fav_count',
@@ -82,6 +89,10 @@ def read_json(input_file):
     return pd.read_json(datas)
 
 
+def make_hyperlink(value):
+    return '=HYPERLINK("%s", "%s")' % (value, value)
+
+
 def custom_sort(dic):
     keys = ['id', 'title', 'price', 'size', 'fav_count',
             'district', 'town', 'street', 'subway', 'community',
@@ -101,25 +112,12 @@ if __name__ == '__main__':
 
 """
 必须条件: 
-50平以上，小于500万，至少是两室
-
-尽量条件：
-1. 位置是最重要的，位置和大小优选位置
-2. 尽量400万以内，500万是上限
-
-加分条件：
-1. 板楼，向阳，南北通透
+70平以上，300-450万，至少是两室
+位置是最重要的，位置和大小优选位置
+尽量条件: 板楼(南北通透,向阳)，有电梯
 
 notice:
-1. 优先等额本息贷款
-
-解释：
-1. 等额本息还款金额一直一样，前期还款压力小，未来的钱越来越不值钱
-
-"""
-
-"""
-数据
+1. 优先等额本息贷款。等额本息还款金额一直一样，前期还款压力小，未来的钱越来越不值钱
 
 """
 

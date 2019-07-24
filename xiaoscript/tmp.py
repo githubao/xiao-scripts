@@ -13,12 +13,33 @@ import random
 
 import re
 import time
+import hashlib
 
 hanzi_pat = re.compile('[\u4e00-\u9fa5]')
 
 
 def tmp():
-    run_recom()
+    # run_recom()
+    compare_hash()
+
+
+def compare_hash():
+    file1 = '/Users/baoqiang/Downloads/online.zip'
+    file2 = '/Users/baoqiang/Downloads/offline.zip'
+
+    hash1 = md5(file1)
+    hash2 = md5(file2)
+
+    print(hash1)
+    print(hash2)
+
+
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 
 def run_recom():
@@ -32,6 +53,7 @@ def run_recom():
     m = token_re.search(s)
     if m:
         print(m.group())
+
 
 def tmp9():
     """

@@ -20,7 +20,7 @@ def run():
     # cmdline.execute('scrapy crawl nuanfang'.split())
     # cmdline.execute('scrapy crawl danke'.split())
     # cmdline.execute('scrapy crawl miui'.split())
-    cmdline.execute('scrapy crawl lianjia2'.split())
+    # cmdline.execute('scrapy crawl lianjia2'.split())
     # cmdline.execute('scrapy crawl dianping'.split())
     # cmdline.execute('scrapy crawl telegram'.split())
     # cmdline.execute('scrapy crawl studygo'.split())
@@ -28,6 +28,9 @@ def run():
     # cmdline.execute('scrapy crawl trip_advisor'.split())
     # cmdline.execute('scrapy crawl kaola'.split())
     # cmdline.execute('scrapy crawl jianshu_collection'.split())
+    # cmdline.execute('scrapy crawl jdbook_spider'.split())
+    # cmdline.execute('scrapy crawl dianping_chamber'.split())
+    cmdline.execute('scrapy crawl lj_xiaoqu_spider'.split())
 
 
 def main():
