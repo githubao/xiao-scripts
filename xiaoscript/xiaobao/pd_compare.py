@@ -12,6 +12,7 @@ import pandas as pd
 import json
 import sys
 from hanziconv import HanziConv
+import numpy as np
 
 # from pyspark.sql import functions as F
 # from pyspark import HiveContext, SparkContext
@@ -49,7 +50,101 @@ def main():
     # to_kaola()
     # to_jianshu()
     # to_jdbook()
-    read_csv()
+    # read_csv()
+    # to_ljxiaoqu()
+    # to_douban()
+    to_lianjia()
+
+
+def to_douban():
+    input_file = root_path + 'douban_xiaozu.json'
+    out_file = root_path + 'douban_xiaozu.xlsx'
+
+    df = read_json(input_file)
+
+    # 去重
+    df.drop_duplicates(subset=['id'], keep='first', inplace=True)
+
+    dic = df['id'].groupby(df['name']).agg('count').to_dict()
+    # print(dic)
+
+    # 统计个数
+    df['count'] = df['name'].apply(lambda x: dic.get(x, 0))
+
+    # 列格式处理
+    df['id'] = df['id'].apply(lambda x: 'A{}'.format(x))
+    df['name'] = df['name'].apply(lambda x: 'A{}'.format(x))
+
+    # 添加超链接
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
+
+    # 指定列的顺序
+    cols = ['id', 'name', 'title', 'url', 'count', 'from_url', 'time']
+    df = df.loc[:, cols]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['count', 'time'], ascending=[True, False])
+
+    df.to_excel(out_file, index=False)
+
+
+def to_ljxiaoqu():
+    input_file = root_path + 'lianjia_xiaoqu.json'
+    out_file = root_path + 'lianjia_xiaoqu.xlsx'
+
+    df = read_json(input_file)
+
+    # 过滤
+    # df = df[df['cnt'] >= 10000]
+
+    # 添加超链接
+    df['id'] = df['id'].apply(lambda x: '{}'.format(x))
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
+    df['from_url'] = df['from_url'].apply(lambda x: make_hyperlink(x))
+
+    # 指定列的顺序
+    cols = ['id', 'district', 'bizcircle', 'xiaoqu', 'price', 'sell_count',
+            'url', 'chengjiao', 'year', 'from_url', 'struct']
+    df = df.loc[:, cols]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['chengjiao', 'sell_count'], ascending=[False, False])
+
+    df.to_excel(out_file, index=False)
+
+
+# lianjia
+def to_lianjia():
+    input_file = root_path + 'lianjia.json'
+    # out_file = root_path + 'lianjia.xlsx'
+    out_file = root_path + 'lianjia.csv'
+
+    df = read_json(input_file)
+
+    # 去重
+    df.drop_duplicates('id', 'first', inplace=True)
+
+    # 价格过滤
+    df = df[(df['price'] >= 400) & (df['price'] <= 600)]
+
+    # 面积过滤
+    df = df[(df['size'] >= 70) & (df['size'] <= 130)]
+
+    # 添加超链接
+    df['url'] = df['url'].apply(lambda x: make_hyperlink(x))
+
+    # 指定列的顺序
+    cols = ['id', 'price', 'size', 'unit', 'size_inuse', 'subway', 'title',
+            'district', 'street', 'town', 'community',
+            'url', 'fav_count',
+            'direction', 'floor', 'house_type', 'structure', 'transact_type']
+    df = df.loc[:, cols]
+
+    # 按照多个字段排序
+    df = df.sort_values(by=['fav_count', 'unit'], ascending=[False, True])
+
+    # df.to_excel(out_file, index=False)
+    df.to_csv(out_file, index=False)
 
 
 def read_csv():
@@ -436,40 +531,6 @@ def to_excel_miui():
 
     # 按照多个字段排序
     df = df.sort_values(by=['price', 'comment'], ascending=[True, False])
-
-    df.to_excel(out_file, index=False)
-
-
-def to_excel_ziru():
-    """
-    自如接口爬虫来的数据
-    :return:
-    """
-    house_url_fmt = 'http://www.ziroom.com/z/vr/{}.html'
-
-    input_file = root_path + 'ziru3.json'
-    out_file = root_path + 'ziru3.xlsx'
-
-    df = read_json(input_file)
-
-    # 添加url
-    df['url'] = df['id'].map(lambda x: house_url_fmt.format(x))
-
-    # 指定列的顺序
-    cols = ['id', 'subway_line_code_first', 'subway_station_code_first', 'sell_price',
-            'usage_area', 'house_facing', 'title', 'room_name', 'url', 'resblock_name',
-            'build_size', 'dispose_bedroom_amount', 'walking_distance_dt_first']
-    df = df.loc[:, cols]
-
-    # 去重id重复的记录
-    df = df.drop_duplicates('id')
-
-    # 添加超链接
-    df['url'] = df['url'].map(lambda x: make_hyperlink(x))
-
-    # 去除"约"
-    df['usage_area'] = df['usage_area'].map(lambda x: float('{}'.format(x).replace('约', '')))
-    df['build_size'] = df['build_size'].map(lambda x: float('{}'.format(x).replace('约', '')))
 
     df.to_excel(out_file, index=False)
 

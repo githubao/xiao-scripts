@@ -16,6 +16,9 @@ import json
 # out_file = '/mnt/home/baoqiang/lianjia.json'
 out_file = '/Users/baoqiang/Downloads/lianjia.json'
 
+curl = 'https://bj.lianjia.com/ershoufang/chaoyang/l2l3ba70ea130bp400ep550/'
+conditions = 'l2l3ba70ea130bp400ep550'
+
 
 class Lianjia2Spider(scrapy.Spider):
     name = 'lianjia2'
@@ -31,6 +34,9 @@ class Lianjia2Spider(scrapy.Spider):
             if 'lf.lianjia' in url:
                 continue
 
+            if 'chaoyang' not in url:
+                continue
+
             yield Request(url, callback=self.parse_page)
 
             # break
@@ -39,7 +45,8 @@ class Lianjia2Spider(scrapy.Spider):
         pg_num = get_pg_num(response)
 
         for i in range(1, pg_num + 1):
-            yield Request('{}pg{}/'.format(response.url, i), callback=self.parse_list)
+            # yield Request('{}pg{}/'.format(response.url, i), callback=self.parse_list)
+            yield Request('{}pg{}{}/'.format(response.url, i, conditions), callback=self.parse_list)
 
             # break
 

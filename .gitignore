@@ -1,6 +1,5 @@
 .idea/
 xiaoscript/spider/spiders/eecode.py
-xiaoscript/script/scrapy_tce.py
 
 xiaoscript/product/metastore_db/*
 
