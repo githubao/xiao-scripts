@@ -13,13 +13,17 @@ import json
 import sys
 from hanziconv import HanziConv
 import numpy as np
+import pprint
+import os
 
-# from pyspark.sql import functions as F
-# from pyspark import HiveContext, SparkContext
+from pyspark.sql import functions as F
+from pyspark import HiveContext, SparkContext
 
 # root_path = '/data01/home/baoqiang/repos/toutiao/app/data'
 # root_path = '/Users/baoqiang/Downloads/分成策略V3'
 root_path = '/Users/baoqiang/Downloads/'
+
+os.environ['PYSPARK_PYTHON'] = '/usr/local/bin/python3'
 
 
 # root_path = '/Users/baoqiang/repos/toutiao/app/data'
@@ -53,7 +57,52 @@ def main():
     # read_csv()
     # to_ljxiaoqu()
     # to_douban()
-    to_lianjia()
+    # to_lianjia()
+    # to_yubaobao()
+    # to_json_cate()
+    run_hive()
+
+
+def to_json_cate():
+    input_file = root_path + 'a.csv'
+    out_file = root_path + 'a.json'
+
+    datas = []
+
+    uids = []
+    tids = []
+
+    with open(input_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            attrs = line.split("\t")
+
+            if not line:
+                if len(uids) > 0:
+                    datas.append({"uids": uids, "template_ids": tids})
+                    uids = []
+                    tids = []
+                    continue
+
+            if len(attrs) != 2:
+                continue
+
+            uids.append(int(attrs[0]))
+            tids.append(int(attrs[1]))
+
+    with open(out_file, 'w') as fw:
+        json.dump(datas, fw)
+
+    # data_str = json.dumps(datas)
+    # pprint.pprint(data_str, indent=4)
+
+
+def to_yubaobao():
+    input_file = root_path + 'SubBusinessType1.txt'
+    out_file = root_path + 'SubBusinessType1.xlsx'
+
+    df = read_json2(input_file)
+    df.to_excel(out_file, index=False)
 
 
 def to_douban():
@@ -116,8 +165,8 @@ def to_ljxiaoqu():
 # lianjia
 def to_lianjia():
     input_file = root_path + 'lianjia.json'
-    # out_file = root_path + 'lianjia.xlsx'
-    out_file = root_path + 'lianjia.csv'
+    out_file = root_path + 'lianjia.xlsx'
+    # out_file = root_path + 'lianjia.csv'
 
     df = read_json(input_file)
 
@@ -143,8 +192,8 @@ def to_lianjia():
     # 按照多个字段排序
     df = df.sort_values(by=['fav_count', 'unit'], ascending=[False, True])
 
-    # df.to_excel(out_file, index=False)
-    df.to_csv(out_file, index=False)
+    df.to_excel(out_file, index=False)
+    # df.to_csv(out_file, index=False)
 
 
 def read_csv():
@@ -615,6 +664,25 @@ def run_isin():
     # df2 = pd.DataFrame()
 
 
+def run_hive():
+    dic = [{'id': '1,2,3'}]
+    # df = pd.DataFrame(dic)
+    sc = SparkContext()
+    # sc.parallelize(dic)
+
+    sql_ctx = HiveContext(sc)
+    # sql_ctx.registerDataFrameAsTable(df, "aaa")
+
+    sdf = sql_ctx.createDataFrame(dic)
+    sdf.registerTempTable('aaa')
+
+    # sdf.show()
+
+    # df2 = sql_ctx.sql('select split(id,',') from aaa')
+    df2 = sql_ctx.sql('select  select collect_list(cast (explode(split(id,",")) AS string)) from aaa')
+    df2.show()
+
+
 def find_null():
     filename = '/Users/baoqiang/Downloads/2.txt'
 
@@ -742,6 +810,14 @@ def read_json(input_file):
         datas = '[{}]'.format(','.join(datas))
 
     return pd.read_json(datas)
+
+
+# list的json
+def read_json2(input_file):
+    with open(input_file, 'r', encoding='utf-8') as f:
+        datas = json.loads(f.read(), encoding='utf-8')
+
+    return pd.DataFrame(datas)
 
 
 def run_df(input_file, filter_rule, out_file):

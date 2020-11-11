@@ -34,7 +34,10 @@ class Lianjia2Spider(scrapy.Spider):
             if 'lf.lianjia' in url:
                 continue
 
-            if 'chaoyang' not in url:
+            # if 'chaoyang' not in url:
+            #     continue
+
+            if 'haidian' not in url:
                 continue
 
             yield Request(url, callback=self.parse_page)

@@ -7,7 +7,7 @@
 @author: pacman
 @time: 2018/2/11 15:54
 """
-
+import json
 import platform
 import random
 
@@ -20,7 +20,15 @@ hanzi_pat = re.compile('[\u4e00-\u9fa5]')
 
 def tmp():
     # run_recom()
-    compare_hash()
+    # compare_hash()
+    json_len()
+
+
+def json_len():
+    filename = '/Users/BaoQiang/Downloads/1.txt'
+    with open(filename, 'r', encoding='utf-8') as f:
+        jdata = json.load(f)
+        print(len(jdata['data']['productApps']))
 
 
 def compare_hash():
